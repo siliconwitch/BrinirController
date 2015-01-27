@@ -504,12 +504,6 @@
     <ClInclude Include="config.h">
       <Filter>Header files\Firmware</Filter>
     </ClInclude>
-    <ClInclude Include="gcc_Debug.h">
-      <Filter>Header files\Firmware</Filter>
-    </ClInclude>
-    <ClInclude Include="gcc_Release.h">
-      <Filter>Header files\Firmware</Filter>
-    </ClInclude>
     <ClInclude Include="prototypes.h">
       <Filter>Header files\Firmware</Filter>
     </ClInclude>
