@@ -2,38 +2,38 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source files">
-      <UniqueIdentifier>{0e6cb8c4-4e67-423c-a8bd-db12f8f7c692}</UniqueIdentifier>
+      <UniqueIdentifier>{25a16fd2-02a0-454e-bf80-61ce07aeba8b}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Header files">
-      <UniqueIdentifier>{bbd333e3-2a55-4865-b17d-3fba5e271187}</UniqueIdentifier>
+      <UniqueIdentifier>{dda6b47a-24cc-489d-9b2c-c0bb006223f0}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource files">
-      <UniqueIdentifier>{3fde87dc-eae6-4fb4-b91e-07f70d941419}</UniqueIdentifier>
+      <UniqueIdentifier>{a37dac00-60fe-4444-80d7-939078dda3c1}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
     <Filter Include="Make files">
-      <UniqueIdentifier>{0c1dab68-17bd-4faa-aaa9-4f9c1e4aa98e}</UniqueIdentifier>
+      <UniqueIdentifier>{3f0fe90f-cd85-4fb7-9594-9fd4606de69c}</UniqueIdentifier>
       <Extensions>*.mak</Extensions>
     </Filter>
     <Filter Include="Source files\Device-specific files">
-      <UniqueIdentifier>{1f46025b-734f-41ea-a06f-98ae8a0aa23e}</UniqueIdentifier>
+      <UniqueIdentifier>{98643df7-9d12-4318-9f9a-4256bf9e688b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header files\Device-specific files">
-      <UniqueIdentifier>{3f10ec3a-cf1f-46a3-8181-36bd4ea0e203}</UniqueIdentifier>
+      <UniqueIdentifier>{8c27f660-3e68-4469-936a-aa966e85c8a6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source files\Firmware">
-      <UniqueIdentifier>{822cc6d7-cb30-4c9e-9dea-d3973aa691b5}</UniqueIdentifier>
+      <UniqueIdentifier>{0bea6b10-1fda-4e08-b8a3-f000c80d71d0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header files\Firmware">
-      <UniqueIdentifier>{b2401e23-6a42-4045-aa98-26487919a282}</UniqueIdentifier>
+      <UniqueIdentifier>{e3830e8c-31ab-4313-90d7-f689fc11a1fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source files\fuzzyController_ert_rtw">
-      <UniqueIdentifier>{9c34dd9e-5bdc-403c-a0ca-1742e4a4e421}</UniqueIdentifier>
+      <UniqueIdentifier>{375afda0-9d04-498e-9c6d-fe09200eef1b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header files\fuzzyController_ert_rtw">
-      <UniqueIdentifier>{75d91bdb-5824-4c5f-956d-96e5ab95b2e5}</UniqueIdentifier>
+      <UniqueIdentifier>{7e2aa5af-8c7d-45a8-a3bb-82d1cf8594b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -246,9 +246,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stm32f4xx_hal_conf.h">
-      <Filter>Source files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h">
       <Filter>Header files\Device-specific files</Filter>
     </ClInclude>
@@ -507,10 +504,19 @@
     <ClInclude Include="config.h">
       <Filter>Header files\Firmware</Filter>
     </ClInclude>
+    <ClInclude Include="gcc_Debug.h">
+      <Filter>Header files\Firmware</Filter>
+    </ClInclude>
+    <ClInclude Include="gcc_Release.h">
+      <Filter>Header files\Firmware</Filter>
+    </ClInclude>
     <ClInclude Include="prototypes.h">
       <Filter>Header files\Firmware</Filter>
     </ClInclude>
     <ClInclude Include="stm32f4xx_it.h">
+      <Filter>Header files\Firmware</Filter>
+    </ClInclude>
+    <ClInclude Include="stm32f4xx_hal_conf.h">
       <Filter>Header files\Firmware</Filter>
     </ClInclude>
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\fuzzyController.h">

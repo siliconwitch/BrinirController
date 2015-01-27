@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{FBB54FF1-DE76-48DC-996F-BFE929410F6D}</ProjectGuid>
+    <ProjectGuid>{750AEF91-3AE5-43A3-85A8-58C7CB05CE26}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -221,6 +221,8 @@
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\rtmodel.h" />
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\rtwtypes.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="gcc_Debug.h" />
+    <ClInclude Include="gcc_Release.h" />
     <ClInclude Include="prototypes.h" />
     <ClInclude Include="stm32f4xx_hal_conf.h" />
     <ClInclude Include="stm32f4xx_it.h" />
