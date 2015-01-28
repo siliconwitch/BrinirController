@@ -87,6 +87,11 @@ int main(void)
   sendSerialString("Enjoy your drive!\n");
   sendSerialString("\n");
 
+  /* Preset values */
+  //fuzzyController_U.wheelFeedbackEnable = WHEELFEEDBACKENABLE;
+  fuzzyController_U.reverseSteering = INVERTSTEERING;
+  fuzzyController_U.steeringTrim = STEERINGTRIM;
+
   while(1)
   {
         
@@ -100,8 +105,6 @@ int main(void)
         fuzzyController_U.frontDifferential = FRONTSLIP;
         fuzzyController_U.rearDifferential = REARSLIP; 
         fuzzyController_U.powerBias = POWERBIAS; 
-		//fuzzyController_U.wheelFeedbackEnable = WHEELFEEDBACKENABLE;
-		//fuzzyController_U.invertSteering = INVERTSTEERING;
 
         /* Run the controller */ 
         fuzzyController_step();

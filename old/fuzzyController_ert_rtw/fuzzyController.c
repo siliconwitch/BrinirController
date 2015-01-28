@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'fuzzyController'.
  *
- * Model version                  : 1.25
+ * Model version                  : 1.23
  * Simulink Coder version         : 8.5 (R2013b) 08-Aug-2013
- * C/C++ source code generated on : Wed Jan 28 21:21:21 2015
+ * C/C++ source code generated on : Wed Jan 28 20:09:45 2015
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -116,54 +116,54 @@ void fuzzyController_step(void)
   fuzzyController_B.Weighting_a = fuzzyController_U.gyroYaw *
     fuzzyController_U.gyroGain;
 
-  /* Saturate: '<S1>/Saturation' incorporates:
+  /* Saturate: '<S1>/Saturation5' incorporates:
    *  Inport: '<Root>/steeringSignal'
    */
-  if (fuzzyController_B.Weighting_a >= fuzzyController_P.Saturation_UpperSat) {
-    fuzzyController_B.Saturation[0] = fuzzyController_P.Saturation_UpperSat;
+  if (fuzzyController_B.Weighting_a >= fuzzyController_P.Saturation5_UpperSat) {
+    fuzzyController_B.Saturation5[0] = fuzzyController_P.Saturation5_UpperSat;
   } else if (fuzzyController_B.Weighting_a <=
-             fuzzyController_P.Saturation_LowerSat) {
-    fuzzyController_B.Saturation[0] = fuzzyController_P.Saturation_LowerSat;
+             fuzzyController_P.Saturation5_LowerSat) {
+    fuzzyController_B.Saturation5[0] = fuzzyController_P.Saturation5_LowerSat;
   } else {
-    fuzzyController_B.Saturation[0] = fuzzyController_B.Weighting_a;
+    fuzzyController_B.Saturation5[0] = fuzzyController_B.Weighting_a;
   }
 
-  if (fuzzyController_U.steeringSignal >= fuzzyController_P.Saturation_UpperSat)
+  if (fuzzyController_U.steeringSignal >= fuzzyController_P.Saturation5_UpperSat)
   {
-    fuzzyController_B.Saturation[1] = fuzzyController_P.Saturation_UpperSat;
+    fuzzyController_B.Saturation5[1] = fuzzyController_P.Saturation5_UpperSat;
   } else if (fuzzyController_U.steeringSignal <=
-             fuzzyController_P.Saturation_LowerSat) {
-    fuzzyController_B.Saturation[1] = fuzzyController_P.Saturation_LowerSat;
+             fuzzyController_P.Saturation5_LowerSat) {
+    fuzzyController_B.Saturation5[1] = fuzzyController_P.Saturation5_LowerSat;
   } else {
-    fuzzyController_B.Saturation[1] = fuzzyController_U.steeringSignal;
+    fuzzyController_B.Saturation5[1] = fuzzyController_U.steeringSignal;
   }
 
-  /* End of Saturate: '<S1>/Saturation' */
+  /* End of Saturate: '<S1>/Saturation5' */
 
   /* If: '<S127>/If' incorporates:
    *  Constant: '<S129>/0'
    *  Constant: '<S130>/0'
    */
-  if ((fuzzyController_B.Saturation[1] < -3.0) || (fuzzyController_B.Saturation
-       [1] > 1.0)) {
+  if ((fuzzyController_B.Saturation5[1] < -3.0) ||
+      (fuzzyController_B.Saturation5[1] > 1.0)) {
     /* Outputs for IfAction SubSystem: '<S127>/If Action Subsystem' incorporates:
      *  ActionPort: '<S129>/Action Port'
      */
     fuzzyController_B.Merge = fuzzyController_P._Value_ho;
 
     /* End of Outputs for SubSystem: '<S127>/If Action Subsystem' */
-  } else if (fuzzyController_B.Saturation[1] == -1.0) {
+  } else if (fuzzyController_B.Saturation5[1] == -1.0) {
     /* Outputs for IfAction SubSystem: '<S127>/If Action Subsystem1' incorporates:
      *  ActionPort: '<S130>/Action Port'
      */
     fuzzyController_B.Merge = fuzzyController_P._Value_g;
 
     /* End of Outputs for SubSystem: '<S127>/If Action Subsystem1' */
-  } else if (fuzzyController_B.Saturation[1] < -1.0) {
+  } else if (fuzzyController_B.Saturation5[1] < -1.0) {
     /* Outputs for IfAction SubSystem: '<S127>/If Action Subsystem3' incorporates:
      *  ActionPort: '<S132>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation[1],
+    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation5[1],
       &fuzzyController_B.Merge, (P_IfActionSubsystem3_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem3);
 
@@ -172,7 +172,7 @@ void fuzzyController_step(void)
     /* Outputs for IfAction SubSystem: '<S127>/If Action Subsystem2' incorporates:
      *  ActionPort: '<S131>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation[1],
+    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation5[1],
       &fuzzyController_B.Merge, (P_IfActionSubsystem2_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem2);
 
@@ -202,26 +202,26 @@ void fuzzyController_step(void)
    *  Constant: '<S133>/0'
    *  Constant: '<S134>/0'
    */
-  if ((fuzzyController_B.Saturation[1] < -1.0) || (fuzzyController_B.Saturation
-       [1] > 3.0)) {
+  if ((fuzzyController_B.Saturation5[1] < -1.0) ||
+      (fuzzyController_B.Saturation5[1] > 3.0)) {
     /* Outputs for IfAction SubSystem: '<S128>/If Action Subsystem' incorporates:
      *  ActionPort: '<S133>/Action Port'
      */
     fuzzyController_B.Merge_b = fuzzyController_P._Value_pu;
 
     /* End of Outputs for SubSystem: '<S128>/If Action Subsystem' */
-  } else if (fuzzyController_B.Saturation[1] == 1.0) {
+  } else if (fuzzyController_B.Saturation5[1] == 1.0) {
     /* Outputs for IfAction SubSystem: '<S128>/If Action Subsystem1' incorporates:
      *  ActionPort: '<S134>/Action Port'
      */
     fuzzyController_B.Merge_b = fuzzyController_P._Value_hv;
 
     /* End of Outputs for SubSystem: '<S128>/If Action Subsystem1' */
-  } else if (fuzzyController_B.Saturation[1] < 1.0) {
+  } else if (fuzzyController_B.Saturation5[1] < 1.0) {
     /* Outputs for IfAction SubSystem: '<S128>/If Action Subsystem3' incorporates:
      *  ActionPort: '<S136>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation[1],
+    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation5[1],
       &fuzzyController_B.Merge_b, (P_IfActionSubsystem3_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem3_c);
 
@@ -230,7 +230,7 @@ void fuzzyController_step(void)
     /* Outputs for IfAction SubSystem: '<S128>/If Action Subsystem2' incorporates:
      *  ActionPort: '<S135>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation[1],
+    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation5[1],
       &fuzzyController_B.Merge_b, (P_IfActionSubsystem2_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem2_j);
 
@@ -260,26 +260,26 @@ void fuzzyController_step(void)
    *  Constant: '<S123>/0'
    *  Constant: '<S124>/0'
    */
-  if ((fuzzyController_B.Saturation[0] < -2.0) || (fuzzyController_B.Saturation
-       [0] > 0.0)) {
+  if ((fuzzyController_B.Saturation5[0] < -2.0) ||
+      (fuzzyController_B.Saturation5[0] > 0.0)) {
     /* Outputs for IfAction SubSystem: '<S118>/If Action Subsystem' incorporates:
      *  ActionPort: '<S123>/Action Port'
      */
     fuzzyController_B.Merge_k = fuzzyController_P._Value_i1;
 
     /* End of Outputs for SubSystem: '<S118>/If Action Subsystem' */
-  } else if (fuzzyController_B.Saturation[0] == -1.0) {
+  } else if (fuzzyController_B.Saturation5[0] == -1.0) {
     /* Outputs for IfAction SubSystem: '<S118>/If Action Subsystem1' incorporates:
      *  ActionPort: '<S124>/Action Port'
      */
     fuzzyController_B.Merge_k = fuzzyController_P._Value_l5;
 
     /* End of Outputs for SubSystem: '<S118>/If Action Subsystem1' */
-  } else if (fuzzyController_B.Saturation[0] < -1.0) {
+  } else if (fuzzyController_B.Saturation5[0] < -1.0) {
     /* Outputs for IfAction SubSystem: '<S118>/If Action Subsystem3' incorporates:
      *  ActionPort: '<S126>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation[0],
+    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation5[0],
       &fuzzyController_B.Merge_k, (P_IfActionSubsystem3_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem3_k);
 
@@ -288,7 +288,7 @@ void fuzzyController_step(void)
     /* Outputs for IfAction SubSystem: '<S118>/If Action Subsystem2' incorporates:
      *  ActionPort: '<S125>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation[0],
+    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation5[0],
       &fuzzyController_B.Merge_k, (P_IfActionSubsystem2_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem2_o);
 
@@ -318,26 +318,26 @@ void fuzzyController_step(void)
    *  Constant: '<S119>/0'
    *  Constant: '<S120>/0'
    */
-  if ((fuzzyController_B.Saturation[0] < 0.0) || (fuzzyController_B.Saturation[0]
-       > 2.0)) {
+  if ((fuzzyController_B.Saturation5[0] < 0.0) ||
+      (fuzzyController_B.Saturation5[0] > 2.0)) {
     /* Outputs for IfAction SubSystem: '<S117>/If Action Subsystem' incorporates:
      *  ActionPort: '<S119>/Action Port'
      */
     fuzzyController_B.Merge_bs = fuzzyController_P._Value_ll;
 
     /* End of Outputs for SubSystem: '<S117>/If Action Subsystem' */
-  } else if (fuzzyController_B.Saturation[0] == 1.0) {
+  } else if (fuzzyController_B.Saturation5[0] == 1.0) {
     /* Outputs for IfAction SubSystem: '<S117>/If Action Subsystem1' incorporates:
      *  ActionPort: '<S120>/Action Port'
      */
     fuzzyController_B.Merge_bs = fuzzyController_P._Value_fz;
 
     /* End of Outputs for SubSystem: '<S117>/If Action Subsystem1' */
-  } else if (fuzzyController_B.Saturation[0] < 1.0) {
+  } else if (fuzzyController_B.Saturation5[0] < 1.0) {
     /* Outputs for IfAction SubSystem: '<S117>/If Action Subsystem3' incorporates:
      *  ActionPort: '<S122>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation[0],
+    fuzzyControl_IfActionSubsystem3(fuzzyController_B.Saturation5[0],
       &fuzzyController_B.Merge_bs, (P_IfActionSubsystem3_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem3_b);
 
@@ -346,7 +346,7 @@ void fuzzyController_step(void)
     /* Outputs for IfAction SubSystem: '<S117>/If Action Subsystem2' incorporates:
      *  ActionPort: '<S121>/Action Port'
      */
-    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation[0],
+    fuzzyControl_IfActionSubsystem2(fuzzyController_B.Saturation5[0],
       &fuzzyController_B.Merge_bs, (P_IfActionSubsystem2_fuzzyCon_T *)
       &fuzzyController_P.IfActionSubsystem2_e);
 
@@ -440,39 +440,21 @@ void fuzzyController_step(void)
   /* End of Switch: '<S106>/Switch' */
 
   /* Switch: '<S1>/Switch' incorporates:
-   *  Gain: '<S1>/Gain'
-   *  Inport: '<Root>/reverseSteering'
+   *  Inport: '<Root>/SteeringReverse '
    */
-  if (fuzzyController_U.reverseSteering > fuzzyController_P.Switch_Threshold_i)
+  if (fuzzyController_U.SteeringReverse > fuzzyController_P.Switch_Threshold_n)
   {
-    fuzzyController_B.d0 = fuzzyController_B.Switch;
+    /* Outport: '<Root>/steeringOutput' */
+    fuzzyController_Y.steeringOutput = fuzzyController_B.Switch;
   } else {
-    fuzzyController_B.d0 = fuzzyController_P.Gain_Gain *
+    /* Outport: '<Root>/steeringOutput' incorporates:
+     *  Gain: '<S1>/Gain'
+     */
+    fuzzyController_Y.steeringOutput = fuzzyController_P.Gain_Gain *
       fuzzyController_B.Switch;
   }
 
   /* End of Switch: '<S1>/Switch' */
-
-  /* Sum: '<S1>/Sum' incorporates:
-   *  Inport: '<Root>/steeringTrim'
-   */
-  fuzzyController_B.Weighting_h = fuzzyController_U.steeringTrim +
-    fuzzyController_B.d0;
-
-  /* Saturate: '<S1>/Saturation5' */
-  if (fuzzyController_B.Weighting_h >= fuzzyController_P.Saturation5_UpperSat) {
-    /* Outport: '<Root>/steeringOutput' */
-    fuzzyController_Y.steeringOutput = fuzzyController_P.Saturation5_UpperSat;
-  } else if (fuzzyController_B.Weighting_h <=
-             fuzzyController_P.Saturation5_LowerSat) {
-    /* Outport: '<Root>/steeringOutput' */
-    fuzzyController_Y.steeringOutput = fuzzyController_P.Saturation5_LowerSat;
-  } else {
-    /* Outport: '<Root>/steeringOutput' */
-    fuzzyController_Y.steeringOutput = fuzzyController_B.Weighting_h;
-  }
-
-  /* End of Saturate: '<S1>/Saturation5' */
 
   /* If: '<S55>/If' incorporates:
    *  Constant: '<S57>/0'
@@ -1359,65 +1341,17 @@ void fuzzyController_step(void)
 
   /* End of Switch: '<S9>/Switch' */
 
-  /* Saturate: '<S1>/Saturation6' */
-  if (fuzzyController_B.Weighting_i >= fuzzyController_P.Saturation6_UpperSat) {
-    /* Outport: '<Root>/FLWheelOutput' */
-    fuzzyController_Y.FLWheelOutput = fuzzyController_P.Saturation6_UpperSat;
-  } else if (fuzzyController_B.Weighting_i <=
-             fuzzyController_P.Saturation6_LowerSat) {
-    /* Outport: '<Root>/FLWheelOutput' */
-    fuzzyController_Y.FLWheelOutput = fuzzyController_P.Saturation6_LowerSat;
-  } else {
-    /* Outport: '<Root>/FLWheelOutput' */
-    fuzzyController_Y.FLWheelOutput = fuzzyController_B.Weighting_i;
-  }
+  /* Outport: '<Root>/FLWheelOutput' */
+  fuzzyController_Y.FLWheelOutput = fuzzyController_B.Weighting_i;
 
-  /* End of Saturate: '<S1>/Saturation6' */
+  /* Outport: '<Root>/FRWheelOutput' */
+  fuzzyController_Y.FRWheelOutput = fuzzyController_B.Weighting_c;
 
-  /* Saturate: '<S1>/Saturation7' */
-  if (fuzzyController_B.Weighting_c >= fuzzyController_P.Saturation7_UpperSat) {
-    /* Outport: '<Root>/FRWheelOutput' */
-    fuzzyController_Y.FRWheelOutput = fuzzyController_P.Saturation7_UpperSat;
-  } else if (fuzzyController_B.Weighting_c <=
-             fuzzyController_P.Saturation7_LowerSat) {
-    /* Outport: '<Root>/FRWheelOutput' */
-    fuzzyController_Y.FRWheelOutput = fuzzyController_P.Saturation7_LowerSat;
-  } else {
-    /* Outport: '<Root>/FRWheelOutput' */
-    fuzzyController_Y.FRWheelOutput = fuzzyController_B.Weighting_c;
-  }
+  /* Outport: '<Root>/BLWheelOutput' */
+  fuzzyController_Y.BLWheelOutput = fuzzyController_B.Weighting_e;
 
-  /* End of Saturate: '<S1>/Saturation7' */
-
-  /* Saturate: '<S1>/Saturation8' */
-  if (fuzzyController_B.Weighting_e >= fuzzyController_P.Saturation8_UpperSat) {
-    /* Outport: '<Root>/BLWheelOutput' */
-    fuzzyController_Y.BLWheelOutput = fuzzyController_P.Saturation8_UpperSat;
-  } else if (fuzzyController_B.Weighting_e <=
-             fuzzyController_P.Saturation8_LowerSat) {
-    /* Outport: '<Root>/BLWheelOutput' */
-    fuzzyController_Y.BLWheelOutput = fuzzyController_P.Saturation8_LowerSat;
-  } else {
-    /* Outport: '<Root>/BLWheelOutput' */
-    fuzzyController_Y.BLWheelOutput = fuzzyController_B.Weighting_e;
-  }
-
-  /* End of Saturate: '<S1>/Saturation8' */
-
-  /* Saturate: '<S1>/Saturation9' */
-  if (fuzzyController_B.Weighting_a >= fuzzyController_P.Saturation9_UpperSat) {
-    /* Outport: '<Root>/BRWheelOutput' */
-    fuzzyController_Y.BRWheelOutput = fuzzyController_P.Saturation9_UpperSat;
-  } else if (fuzzyController_B.Weighting_a <=
-             fuzzyController_P.Saturation9_LowerSat) {
-    /* Outport: '<Root>/BRWheelOutput' */
-    fuzzyController_Y.BRWheelOutput = fuzzyController_P.Saturation9_LowerSat;
-  } else {
-    /* Outport: '<Root>/BRWheelOutput' */
-    fuzzyController_Y.BRWheelOutput = fuzzyController_B.Weighting_a;
-  }
-
-  /* End of Saturate: '<S1>/Saturation9' */
+  /* Outport: '<Root>/BRWheelOutput' */
+  fuzzyController_Y.BRWheelOutput = fuzzyController_B.Weighting_a;
 
   /* If: '<S40>/If' incorporates:
    *  Constant: '<S43>/0'

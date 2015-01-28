@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'fuzzyController'.
  *
- * Model version                  : 1.25
+ * Model version                  : 1.23
  * Simulink Coder version         : 8.5 (R2013b) 08-Aug-2013
- * C/C++ source code generated on : Wed Jan 28 21:21:21 2015
+ * C/C++ source code generated on : Wed Jan 28 20:09:45 2015
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -164,8 +164,6 @@ P_fuzzyController_T fuzzyController_P = {
   0.0,
   1.0,
   0.0,
-  1.0,
-  -1.0,
 
   { -2.0, -1.96, -1.92, -1.88, -1.84, -1.8, -1.76, -1.72, -1.68,
     -1.6400000000000001, -1.6, -1.56, -1.52, -1.48, -1.44, -1.4,
@@ -475,14 +473,6 @@ P_fuzzyController_T fuzzyController_P = {
 
   { 0.0, 0.0, 0.0, 0.0 },
   1.0,
-  1.0,
-  -1.0,
-  1.0,
-  -1.0,
-  1.0,
-  -1.0,
-  1.0,
-  -1.0,
 
   /* Start of '<S128>/If Action Subsystem2' */
   {

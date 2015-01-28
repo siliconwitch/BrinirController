@@ -45,8 +45,9 @@
 	#define POWERBIAS 0
 	#define FRONTSLIP 0.95
 	#define REARSLIP 0.1
- 	#define GYROGAIN 1.3
-	#define INVERTSTEERING 1
+ 	#define GYROGAIN 1.0
+	#define INVERTSTEERING 0
+	#define STEERINGTRIM 0.15
 	#define WHEELFEEDBACKENABLE 0
 
 /*------------------------*/

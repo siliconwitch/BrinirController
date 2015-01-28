@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'fuzzyController'.
  *
- * Model version                  : 1.25
+ * Model version                  : 1.23
  * Simulink Coder version         : 8.5 (R2013b) 08-Aug-2013
- * C/C++ source code generated on : Wed Jan 28 21:21:21 2015
+ * C/C++ source code generated on : Wed Jan 28 20:09:45 2015
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex
@@ -39,7 +39,7 @@ typedef struct {
   real_T impMethod_a[101];             /* '<S109>/impMethod' */
   real_T impMethod_k[101];             /* '<S110>/impMethod' */
   real_T AggMethod4[101];              /* '<S9>/AggMethod4' */
-  real_T Saturation[2];                /* '<S1>/Saturation' */
+  real_T Saturation5[2];               /* '<S1>/Saturation5' */
   real_T TmpSignalConversionAtAnimation1[5];
   real_T Weighting_a;                  /* '<S24>/Weighting' */
   real_T Weighting_i;                  /* '<S21>/Weighting' */
@@ -87,8 +87,7 @@ typedef struct {
   real_T FRFb;                         /* '<Root>/FRFb' */
   real_T BLFb;                         /* '<Root>/BLFb' */
   real_T BRFb;                         /* '<Root>/BRFb' */
-  real_T reverseSteering;              /* '<Root>/reverseSteering' */
-  real_T steeringTrim;                 /* '<Root>/steeringTrim' */
+  real_T SteeringReverse;              /* '<Root>/SteeringReverse ' */
 } ExtU_fuzzyController_T;
 
 /* External outputs (root outports fed by signals with auto storage) */
@@ -371,11 +370,11 @@ struct P_fuzzyController_T_ {
   real_T Weight_Value;                 /* Expression: fis.rule(j_rule).weight
                                         * Referenced by: '<S108>/Weight'
                                         */
-  real_T Saturation_UpperSat;          /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation'
+  real_T Saturation5_UpperSat;         /* Expression: 1
+                                        * Referenced by: '<S1>/Saturation5'
                                         */
-  real_T Saturation_LowerSat;          /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation'
+  real_T Saturation5_LowerSat;         /* Expression: -1
+                                        * Referenced by: '<S1>/Saturation5'
                                         */
   real_T left_Value[101];              /* Expression: trimf(linspace(fis.output(1).range(1),fis.output(1).range(2),101),fis.output(1).mf(1).params)
                                         * Referenced by: '<S113>/left'
@@ -401,14 +400,8 @@ struct P_fuzzyController_T_ {
   real_T Switch_Threshold;             /* Expression: 1
                                         * Referenced by: '<S106>/Switch'
                                         */
-  real_T Switch_Threshold_i;           /* Expression: 0
+  real_T Switch_Threshold_n;           /* Expression: 0
                                         * Referenced by: '<S1>/Switch'
-                                        */
-  real_T Saturation5_UpperSat;         /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation5'
-                                        */
-  real_T Saturation5_LowerSat;         /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation5'
                                         */
   real_T xdata_Value_m[101];           /* Expression: Xdata
                                         * Referenced by: '<S12>/x data'
@@ -493,30 +486,6 @@ struct P_fuzzyController_T_ {
                                         */
   real_T Switch_Threshold_k;           /* Expression: 1
                                         * Referenced by: '<S9>/Switch'
-                                        */
-  real_T Saturation6_UpperSat;         /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation6'
-                                        */
-  real_T Saturation6_LowerSat;         /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation6'
-                                        */
-  real_T Saturation7_UpperSat;         /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation7'
-                                        */
-  real_T Saturation7_LowerSat;         /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation7'
-                                        */
-  real_T Saturation8_UpperSat;         /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation8'
-                                        */
-  real_T Saturation8_LowerSat;         /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation8'
-                                        */
-  real_T Saturation9_UpperSat;         /* Expression: 1
-                                        * Referenced by: '<S1>/Saturation9'
-                                        */
-  real_T Saturation9_LowerSat;         /* Expression: -1
-                                        * Referenced by: '<S1>/Saturation9'
                                         */
   P_IfActionSubsystem2_fuzzyCon_T IfActionSubsystem2_j;/* '<S128>/If Action Subsystem2' */
   P_IfActionSubsystem3_fuzzyCon_T IfActionSubsystem3_c;/* '<S128>/If Action Subsystem3' */
