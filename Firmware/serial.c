@@ -25,7 +25,7 @@ uint8_t telemetryFlag = 0;
 /* Private variables */
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
-uint8_t rxBuffer = 0;
+uint8_t rxBuffer = '\000';
 uint8_t rxString[100];
 int rxindex = 0;
 
@@ -39,6 +39,7 @@ void initSerial()
 	HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 
+	//HAL_UART_MspInit(&huart1);
 	huart1.Instance = USART1;
 	huart1.Init.BaudRate = BAUDRATE;
 	huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -51,6 +52,7 @@ void initSerial()
 	sendSerialString("[OK] Serial started..\n");
 
 	/* Start the receiver */
+	__HAL_UART_FLUSH_DRREGISTER(&huart1);
 	HAL_UART_Receive_DMA(&huart1, &rxBuffer, 1);
 }
 
@@ -61,24 +63,25 @@ void sendSerialString(char string[])
 	HAL_UART_Transmit(&huart1, (uint8_t*)string, lentest+1, 100);
 }
 
+void echo(char string[])
+{
+	HAL_UART_Transmit(&huart1, (uint8_t*)string, 1, 100);
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	rxString[rxindex] = rxBuffer;
+	__HAL_UART_FLUSH_DRREGISTER(&huart1);
 	
-	if(rxBuffer == '\n')
-	{
-		executeSerialCommand(rxString, rxindex);
-		rxindex = 0;
-		int iter = 0;
-		for (iter = 0; iter < 100; iter++){	rxString[iter] = '\000'; } /* Clear out the string to avoid reevaluating data */
-	}
+	echo(&rxBuffer);
 
-	else{
-		rxindex++;
-		if(rxindex > 100){rxindex = 0;}
-	}
+	rxString[rxindex] = rxBuffer;
+	rxindex++;
 
-	HAL_UART_Receive_DMA(&huart1, &rxBuffer, 1);
+	if (rxindex > 20) rxindex = 0;
+
+	if (rxBuffer == '5' ) sendSerialString(rxString);
+
+
 }
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
