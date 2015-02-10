@@ -235,14 +235,14 @@
     <ClCompile Include="stm32f4xx_it.c">
       <Filter>Source files\Firmware</Filter>
     </ClCompile>
-    <ClCompile Include="syscalls.c">
-      <Filter>Source files\Firmware</Filter>
-    </ClCompile>
     <ClCompile Include="..\Controller\fuzzyController_ert_rtw\fuzzyController.c">
       <Filter>Source files\fuzzyController_ert_rtw</Filter>
     </ClCompile>
     <ClCompile Include="..\Controller\fuzzyController_ert_rtw\fuzzyController_data.c">
       <Filter>Source files\fuzzyController_ert_rtw</Filter>
+    </ClCompile>
+    <ClCompile Include="syscalls.c">
+      <Filter>Source files\Firmware</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

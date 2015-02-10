@@ -18,6 +18,9 @@
 #include "stm32f4xx_hal.h"
 #include "prototypes.h"
 #include "config.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 /* Public variables */
 uint8_t telemetryFlag = 0;
@@ -26,12 +29,13 @@ uint8_t telemetryFlag = 0;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 uint8_t rxBuffer = '\000';
-uint8_t rxString[100];
+uint8_t rxString[10];
 int rxindex = 0;
 
 /* Private function prototypes */
-void executeSerialCommand(uint8_t string[], int length);
-
+void executeSerialCommand(uint8_t string[]);
+uint8_t compareCommand(uint8_t inString[], uint8_t compString[]);
+int16_t parseInt(uint8_t string[]);
 
 void initSerial()
 {
@@ -49,18 +53,16 @@ void initSerial()
 	huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart1.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&huart1);
-	sendSerialString("[OK] Serial started..\n");
+	print("[OK] Serial started\n");
 
 	/* Start the receiver */
 	__HAL_UART_FLUSH_DRREGISTER(&huart1);
 	HAL_UART_Receive_DMA(&huart1, &rxBuffer, 1);
 }
 
-void sendSerialString(char string[])
+void print(char string[])
 {
-	int lentest = 0;
-	while((string[lentest] != 10) && lentest < 100){  lentest++;  } /* Determines size of string by looking for a \n or ASCII 'NL'. Cuts off after 100 chars */
-	HAL_UART_Transmit(&huart1, (uint8_t*)string, lentest+1, 100);
+	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100);
 }
 
 void echo(char string[])
@@ -71,52 +73,72 @@ void echo(char string[])
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	__HAL_UART_FLUSH_DRREGISTER(&huart1);
-	
+
+	int i = 0;
+
 	echo(&rxBuffer);
 
-	rxString[rxindex] = rxBuffer;
-	rxindex++;
+	if (rxBuffer == '\b') // If Backspace
+	{
+		rxindex--; 
+		if (rxindex < 0) rxindex = 0;
+	}
 
-	if (rxindex > 20) rxindex = 0;
+	else if (rxBuffer == '\n' || rxBuffer == '\r') // If Enter
+	{
+		executeSerialCommand(rxString);
+		rxString[rxindex] = 0;
+		rxindex = 0;
+		for (i = 0; i < 10; i++) rxString[i] = 0;
+	}
 
-	if (rxBuffer == '5' ) sendSerialString(rxString);
-
-
+	else
+	{
+		rxString[rxindex] = rxBuffer;
+		rxindex++;
+		if (rxindex > 9)
+		{
+			rxindex = 0;
+			for (i = 0; i < 10; i++) rxString[i] = '\000';
+			print("\nBrinir> ");
+		}
+	}
 }
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-	sendSerialString("[ERROR] Serial error\n");
+	print("[ERROR] Serial error");
 }
 
-void executeSerialCommand(uint8_t string[], int length)
+void executeSerialCommand(uint8_t string[])
 {
-	if(string[0] == '-') /* All commands start with a - */
-	{ 
-		switch(string[1])
-		{
-			case 'h': /* Help command */
-				sendSerialString("display help\n");
-				break;
-
-			case 'c':
-				sendSerialString("calibrate\n");
-				break;
-
-			case 't':
-				if (telemetryFlag == 0)
-				{
-					telemetryFlag = 1;
-					sendSerialString("Telemetry started\n");
-				}
-
-				else
-				{
-					telemetryFlag = 0;
-					sendSerialString("Telemetry stopped\n");
-				}
-				break;
-		}
+	if (compareCommand(string, "help"))
+	{
+		print("Help screen:\n");
 	}
+
+	if (compareCommand(string, "lol"))
+	{
+		print("Lol screen:\n");
+	}
+
+	print("Brinir> ");
+}
+
+uint8_t compareCommand(uint8_t inString[], uint8_t compString[])
+{
+	int i = 0;
+	int len = strlen(inString);
+	for (i = 0; i <= len; i++)
+	{
+		if (compString[i] != inString[i]) break;
+		if (i = len) return 1;
+	}
+	return 0;
+}
+
+int16_t parseInt(uint8_t string[])
+{
+	return strtof(string, NULL);
 }
 

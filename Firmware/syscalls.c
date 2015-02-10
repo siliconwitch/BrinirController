@@ -3,6 +3,7 @@
  * @brief    Implementation of newlib syscall
  ********************************************************************************/
 
+#include <stm32f4xx_hal.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/types.h>
@@ -13,25 +14,11 @@
 extern int errno;
 extern int  _end;
 
+UART_HandleTypeDef huart1;
+
 __attribute__ ((used))
 caddr_t _sbrk (int size)
 {
-   //extern char _Min_Heap_Size;
-   //extern char __cs3_heap_end ;
-   //static char *current_heap_end = &_Min_Heap_Size;
-   //char *previous_heap_end;
-//
-   //previous_heap_end = current_heap_end;
-//
-   //if (current_heap_end + size > &__cs3_heap_end )
-   //{
-   //   errno = ENOMEM;   // don't forget to include <errno.h>
-   //   return (caddr_t) -1;
-   //}
-//
-   //current_heap_end += size;
-//
-   //return (caddr_t) previous_heap_end;
   return 0;
 }
 
@@ -72,7 +59,16 @@ int _read(int file, char *ptr, int len)
 __attribute__ ((used))
 int _write(int file, char *ptr, int len)
 {
-  return len;
+	int txCount;
+	(void)file;
+	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, 100);
+	return len;
+}
+
+__attribute__((used))
+void abort(void)
+{
+	while (1);
 }
 
 __attribute__ ((used))

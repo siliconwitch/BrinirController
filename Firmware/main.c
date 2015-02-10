@@ -79,13 +79,11 @@ int main(void)
   fuzzyController_initialize();
 
   /* Intro message */
-  sendSerialString("\n");
-  sendSerialString("For help type '-h'\n");
-  sendSerialString("\n");
-  sendSerialString("Aelith Controller Ready\n");
-  sendSerialString("(C) NakLojik 2014\n");
-  sendSerialString("Enjoy your drive!\n");
-  sendSerialString("\n");
+  print("\nFor help type 'help'\n\n");
+  print("Brinir Controller Ready\n");
+  print("(C) NakLojik 2015\n");
+  print("Enjoy your drive!\n\n");
+  print("Brinir> ");
 
   /* Preset values */
   //fuzzyController_U.wheelFeedbackEnable = WHEELFEEDBACKENABLE;
@@ -119,7 +117,7 @@ int main(void)
         /* Send telemetery */
         if (telemetryFlag == 1)
         {
-          //sendSerialString("idfs\n");
+          //print("idfs\n");
         }
 
         /* Reset Watchdog */

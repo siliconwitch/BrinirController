@@ -72,7 +72,7 @@ void initADC(void){
 	HAL_ADC_ConfigChannel(&hadc1, &sConfig);
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&rawADC, 4);
-	sendSerialString("[OK] ADC conversions started..\n");
+	print("[OK] ADC conversions started\n");
 }
 
 /* Put out values into a struct once complete */

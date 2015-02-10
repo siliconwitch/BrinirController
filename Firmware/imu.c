@@ -87,8 +87,8 @@ void IMUConfig(int accelrange, int gyrorange){
 	uint8_t addressAndData[2] = {IMU_WHOAMI, 0x00};
 	HAL_I2C_Master_Transmit(&hi2c1, IMU_ADDRESS<<1, (uint8_t*)addressAndData, 1, 100);	/* This should return the WHOAMI register */
 	HAL_I2C_Master_Receive(&hi2c1, IMU_ADDRESS<<1, (uint8_t *)rawIMU, 1, 100);
-	if (rawIMU[0] == 0x68){sendSerialString("[OK] IMU Found..\n");}
-	else{sendSerialString("[ERROR] IMU not found..\n");}
+	if (rawIMU[0] == 0x68){print("[OK] IMU Found\n");}
+	else{print("[ERROR] IMU not found\n");}
  
 	addressAndData[0] = IMU_CFG;
 	addressAndData[1] = 0x00;
