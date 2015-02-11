@@ -522,6 +522,9 @@
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\rtwtypes.h">
       <Filter>Header files\fuzzyController_ert_rtw</Filter>
     </ClInclude>
+    <ClInclude Include="clicommands.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

@@ -30,7 +30,8 @@ DMA_HandleTypeDef hdma_adc1;
 /* Private function prototypes */
 
 
-void initADC(void){
+void initADC(void)
+{
 	/* Start DMA and attach interrupt */
     __DMA2_CLK_ENABLE();
     //HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 3, 5);

@@ -220,6 +220,7 @@
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\fuzzyController.h" />
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\rtmodel.h" />
     <ClInclude Include="..\Controller\fuzzyController_ert_rtw\rtwtypes.h" />
+    <ClInclude Include="clicommands.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="prototypes.h" />
     <ClInclude Include="stm32f4xx_hal_conf.h" />

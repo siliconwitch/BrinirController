@@ -18,6 +18,7 @@
 #include "stm32f4xx_hal.h"
 #include "prototypes.h"
 #include "config.h"
+#include "clicommands.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,21 +30,21 @@ uint8_t telemetryFlag = 0;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 uint8_t rxBuffer = '\000';
-uint8_t rxString[10];
+uint8_t rxString[MAXCLISTRING];
 int rxindex = 0;
 
 /* Private function prototypes */
 void executeSerialCommand(uint8_t string[]);
-uint8_t compareCommand(uint8_t inString[], uint8_t compString[]);
-int16_t parseInt(uint8_t string[]);
+uint8_t compareCommand(uint8_t inString[], uint8_t compString[], float *numArg);
 
+/* Main serial init function. Run this before sending any serial */
 void initSerial()
 {
 	__DMA2_CLK_ENABLE();
 	HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 
-	//HAL_UART_MspInit(&huart1);
+	/* HAL_UART_MspInit(&huart1); */
 	huart1.Instance = USART1;
 	huart1.Init.BaudRate = BAUDRATE;
 	huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -60,26 +61,24 @@ void initSerial()
 	HAL_UART_Receive_DMA(&huart1, &rxBuffer, 1);
 }
 
+/* Prints the supplied string to uart */
 void print(char string[])
 {
 	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100);
 }
 
-void echo(char string[])
-{
-	HAL_UART_Transmit(&huart1, (uint8_t*)string, 1, 100);
-}
-
+/* UART RX complete callback */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	__HAL_UART_FLUSH_DRREGISTER(&huart1);
+	__HAL_UART_FLUSH_DRREGISTER(&huart1); // Clear the buffer to prevent overrun
 
 	int i = 0;
 
-	echo(&rxBuffer);
+	print(&rxBuffer); // Echo the inputed character
 
-	if (rxBuffer == '\b') // If Backspace
+	if (rxBuffer == 8 || rxBuffer == 127) // If Backspace or del
 	{
+		print("\b \b"); // Properly clear the character
 		rxindex--; 
 		if (rxindex < 0) rxindex = 0;
 	}
@@ -89,7 +88,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		executeSerialCommand(rxString);
 		rxString[rxindex] = 0;
 		rxindex = 0;
-		for (i = 0; i < 10; i++) rxString[i] = 0;
+		for (i = 0; i < MAXCLISTRING; i++) rxString[i] = 0; // Clear the string buffer
 	}
 
 	else
@@ -99,46 +98,61 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		if (rxindex > 9)
 		{
 			rxindex = 0;
-			for (i = 0; i < 10; i++) rxString[i] = '\000';
+			for (i = 0; i < MAXCLISTRING; i++) rxString[i] = 0; // Clear the string buffer
 			print("\nBrinir> ");
 		}
 	}
 }
 
+/* Callback if error has occured in the serial */
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 	print("[ERROR] Serial error");
 }
 
+/* When enter is pressed, the command is excecuted here */
 void executeSerialCommand(uint8_t string[])
 {
-	if (compareCommand(string, "help"))
+	float numArg = 0;
+
+	if (compareCommand(string, CMD_HELP, &numArg))
 	{
-		print("Help screen:\n");
+		print("Help screen result:\n");
 	}
 
-	if (compareCommand(string, "lol"))
+	if (compareCommand(string, CMD_ABOUT, &numArg))
 	{
-		print("Lol screen:\n");
+		print("Lol screen result:\n");
 	}
 
 	print("Brinir> ");
 }
 
-uint8_t compareCommand(uint8_t inString[], uint8_t compString[])
+/* Compared the command with acceptable strings. Also gets number numerical arg if present */
+uint8_t compareCommand(uint8_t inString[], uint8_t compString[], float *numArg)
 {
 	int i = 0;
-	int len = strlen(inString);
-	for (i = 0; i <= len; i++)
+	int j = 0;
+	*numArg = 0.0;
+	uint8_t numString[10]; // Max 10 character numerical string
+
+	int len = strlen(compString); // For length of expected command
+	for (i = 0; i < len; i++)
 	{
-		if (compString[i] != inString[i]) break;
-		if (i = len) return 1;
+		if (compString[i] != inString[i]) return 0; // Compares expected to actual, return if false
+
+		if (i == len - 1) // If we've checked the entire expected command
+		{
+			for (i = 0; i <= len + 10; i++) // Check a bit more into the inString
+			{
+				if (inString[i] == ':') // If we see a : it means we have an arg coming up
+				{
+					i++; // We dont want the : character in the num string
+					for (j = 0; j < 10; j++) { numString[j] = inString[i + j]; } // Copy over the numerical arg
+					*numArg = strtof(numString, NULL);
+				}
+			}
+			return 1; // command worked
+		}
 	}
-	return 0;
 }
-
-int16_t parseInt(uint8_t string[])
-{
-	return strtof(string, NULL);
-}
-

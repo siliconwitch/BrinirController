@@ -30,6 +30,5 @@
 /* serial.c Function prototypes */
 	void initSerial();
 	void print(char string[]);
-	char* itoa(int i, char b[]);
 
 #endif

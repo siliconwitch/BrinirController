@@ -39,8 +39,9 @@ int gyroRegister = 0x00;
 int gyroConvFactor = 131;
 uint8_t temp = 0;
 
-
-void initIMU(void){
+/* Main init function for IMU, run this before using IMU*/
+void initIMU(void)
+{
 	hi2c1.Instance = I2C1;
 	hi2c1.Init.ClockSpeed = 100000;
 	hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -55,7 +56,9 @@ void initIMU(void){
 	IMUConfig(DEFAULTACCELRANGE, DEFAULTGYRORANGE);
 }
 
-void IMUGetMotion(){
+/* Gets register values for accel, gyro and temp data and puts them into correct format */
+void IMUGetMotion()
+{
 	uint8_t address[] = {0x3B}; /* Start Address */
 	HAL_I2C_Master_Transmit(&hi2c1, IMU_ADDRESS<<1, (uint8_t*)address, 1, 100);
 	HAL_I2C_Master_Receive(&hi2c1, IMU_ADDRESS<<1, (uint8_t *)rawIMU, 14, 200);
@@ -71,7 +74,9 @@ void IMUGetMotion(){
     Motion.yaw   = (float) ( (int16_t)((rawIMU[12] << 8) | rawIMU[13]) ) / gyroConvFactor;
 }
 
-void IMUConfig(int accelrange, int gyrorange){
+/* Configs the IMU with various settings for sensitivity */
+void IMUConfig(int accelrange, int gyrorange)
+{
 	/* Figures out what settings to apply */
 	     if (accelrange == 4)  {accelRegister = 0x08; accelConvFactor = 8192; }
 	else if (accelrange == 8)  {accelRegister = 0x10; accelConvFactor = 4096; }
@@ -107,6 +112,8 @@ void IMUConfig(int accelrange, int gyrorange){
 	HAL_I2C_Master_Transmit(&hi2c1, IMU_ADDRESS<<1, (uint8_t*)addressAndData, 2, 100); /* Bring IMU out of reset */
 }
 
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){
-	
+/* Callback if there is an I2C error */
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+	print("[ERROR] I2C error");
 }

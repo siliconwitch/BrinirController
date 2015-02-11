@@ -1,5 +1,5 @@
  /*
- * Brief:       Main config, pin mappings and global variables for Project Aelith.
+ * Brief:       Main config, pin mappings and global variables.
  *
  *				From here we can see all the major variables shared	between the 
  *				vehicle control system as well as all the peripherals. There are

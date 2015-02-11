@@ -50,7 +50,8 @@ GPIO_InitTypeDef GPIO_InitStruct;
 TIM_ClockConfigTypeDef sClockSourceConfig;
 TIM_MasterConfigTypeDef sMasterConfig;
 
-void initIO(){
+void initIO()
+{
 
 	__GPIOA_CLK_ENABLE();
   	__GPIOC_CLK_ENABLE();
@@ -263,7 +264,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 	if (htim->Instance == TIM4){ /* Timer for detecting lost signal, overflows if steering signal lost */
 		RCRadioStructure.steering = 0;
 		RCRadioStructure.throttle = 0;
@@ -325,7 +327,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	}
 }
 
-double CalculateWheelRPM(uint32_t Count){
+double CalculateWheelRPM(uint32_t Count)
+{
     return 60.0 / ((Count/100000.0) * MOTORPOLES);
 }
 
@@ -339,14 +342,16 @@ double normaliseSignal(uint32_t input){
     }
 }
 
-uint32_t denormaliseSignal(double input){
+uint32_t denormaliseSignal(double input)
+{
     if(input >  1.0){input =  1.0;}
     if(input < -1.0){input = -1.0;}
     return (uint32_t) (( (input+1) * ((RECEIVERMAXSIGNAL-RECEIVERMINSIGNAL)/2) ) + RECEIVERMINSIGNAL);
 }
 
 /* Halt the vehicle */
-void safeMode(void){
+void safeMode(void)
+{
     PPMOutputStructure.MOT1 = 0;
     PPMOutputStructure.MOT2 = 0;
     PPMOutputStructure.MOT3 = 0;
