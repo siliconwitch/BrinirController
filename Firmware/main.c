@@ -79,11 +79,11 @@ int main(void)
   fuzzyController_initialize();
 
   /* Intro message */
-  print("\nFor help type 'help'\n\n");
-  print("Brinir Controller Ready\n");
-  print("(C) NakLojik 2015\n");
-  print("Enjoy your drive!\n\n");
-  print("Brinir> ");
+  print("\r\nBrinir Controller Ready");
+  print("\r\n(C) NakLojik 2015");
+  print("\r\nFor help type 'help'");
+  print("\r\nEnjoy your drive!");
+  print("\r\n\nBrinir> ");
 
   /* Preset values */
   //fuzzyController_U.wheelFeedbackEnable = WHEELFEEDBACKENABLE;

@@ -17,5 +17,6 @@
 	// Basic commands
 	#define CMD_HELP "help"
 	#define CMD_ABOUT "about"
+	#define CMD_REBOOT "reboot"
 
 #endif // !__CLICOMMANDS_H

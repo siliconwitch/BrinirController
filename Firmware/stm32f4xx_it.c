@@ -49,10 +49,20 @@ extern TIM_HandleTypeDef htim11;
 extern TIM_HandleTypeDef htim13;
 extern TIM_HandleTypeDef htim14;
 extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_tx;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
+
+/**
+* @brief This function handles DMA2 Stream2 global interrupt.
+*/
+void DMA2_Stream7_IRQHandler(void)
+{
+	HAL_NVIC_ClearPendingIRQ(DMA2_Stream7_IRQn);
+	HAL_DMA_IRQHandler(&hdma_usart1_tx);
+}
 
 /**
 * @brief This function handles DMA2 Stream2 global interrupt.

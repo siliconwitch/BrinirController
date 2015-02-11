@@ -218,7 +218,7 @@ void initIO()
 	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 3);
 	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-	print("[OK] IO and timers ready..\n");
+	print("\r\n[OK] IO and timers ready");
 }
 
 /* EXTI Interrupts */

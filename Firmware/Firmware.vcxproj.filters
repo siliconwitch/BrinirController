@@ -523,7 +523,7 @@
       <Filter>Header files\fuzzyController_ert_rtw</Filter>
     </ClInclude>
     <ClInclude Include="clicommands.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Firmware</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

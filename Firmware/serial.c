@@ -29,6 +29,7 @@ uint8_t telemetryFlag = 0;
 /* Private variables */
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_tx;
 uint8_t rxBuffer = '\000';
 uint8_t rxString[MAXCLISTRING];
 int rxindex = 0;
@@ -54,7 +55,7 @@ void initSerial()
 	huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart1.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&huart1);
-	print("[OK] Serial started\n");
+	print("\r\n[OK] Serial started");
 
 	/* Start the receiver */
 	__HAL_UART_FLUSH_DRREGISTER(&huart1);
@@ -64,7 +65,8 @@ void initSerial()
 /* Prints the supplied string to uart */
 void print(char string[])
 {
-	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100);
+	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)string, strlen(string));
+	//HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100); // Working transmit function
 }
 
 /* UART RX complete callback */
@@ -78,7 +80,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 	if (rxBuffer == 8 || rxBuffer == 127) // If Backspace or del
 	{
-		print("\b \b"); // Properly clear the character
+		print(" \b"); // Properly clear the character
 		rxindex--; 
 		if (rxindex < 0) rxindex = 0;
 	}
@@ -99,7 +101,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		{
 			rxindex = 0;
 			for (i = 0; i < MAXCLISTRING; i++) rxString[i] = 0; // Clear the string buffer
-			print("\nBrinir> ");
+			print("\r\nBrinir> ");
 		}
 	}
 }
@@ -107,7 +109,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 /* Callback if error has occured in the serial */
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-	print("[ERROR] Serial error");
+	print("\r\n[ERROR] Serial error");
 }
 
 /* When enter is pressed, the command is excecuted here */
@@ -117,15 +119,21 @@ void executeSerialCommand(uint8_t string[])
 
 	if (compareCommand(string, CMD_HELP, &numArg))
 	{
-		print("Help screen result:\n");
+		print("\r\nHelp screen result:");
 	}
 
 	if (compareCommand(string, CMD_ABOUT, &numArg))
 	{
-		print("Lol screen result:\n");
+		print("\r\nLol screen result:");
 	}
 
-	print("Brinir> ");
+	if (compareCommand(string, CMD_REBOOT, &numArg))
+	{
+		safeMode();
+		while (1){ } // Will timeout though watchdog
+	}
+
+	print("\r\nBrinir> ");
 }
 
 /* Compared the command with acceptable strings. Also gets number numerical arg if present */
