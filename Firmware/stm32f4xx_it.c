@@ -56,11 +56,12 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 /******************************************************************************/
 
 /**
-* @brief This function handles DMA2 Stream2 global interrupt.
+* @brief This function handles DMA2 Stream7 global interrupt.
 */
 void DMA2_Stream7_IRQHandler(void)
 {
 	HAL_NVIC_ClearPendingIRQ(DMA2_Stream7_IRQn);
+
 	HAL_DMA_IRQHandler(&hdma_usart1_tx);
 }
 
@@ -70,6 +71,7 @@ void DMA2_Stream7_IRQHandler(void)
 void DMA2_Stream2_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream2_IRQn);
+
   HAL_DMA_IRQHandler(&hdma_usart1_rx);
 }
 

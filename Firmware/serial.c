@@ -33,6 +33,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 uint8_t rxBuffer = '\000';
 uint8_t rxString[MAXCLISTRING];
 int rxindex = 0;
+int TXBusy = 0;
 
 /* Private function prototypes */
 void executeSerialCommand(uint8_t string[]);
@@ -44,8 +45,10 @@ void initSerial()
 	__DMA2_CLK_ENABLE();
 	HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+	HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 5, 0);
+	HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
-	/* HAL_UART_MspInit(&huart1); */
+	HAL_UART_MspInit(&huart1);
 	huart1.Instance = USART1;
 	huart1.Init.BaudRate = BAUDRATE;
 	huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -65,8 +68,14 @@ void initSerial()
 /* Prints the supplied string to uart */
 void print(char string[])
 {
-	HAL_UART_Transmit_DMA(&huart1, (uint8_t*)string, strlen(string));
-	//HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100); // Working transmit function
+	//HAL_UART_Transmit_DMA(&huart1, (uint8_t*)string, strlen(string));
+	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100); // Working transmit function
+}
+
+/* UART TX complete callback */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+
 }
 
 /* UART RX complete callback */
@@ -97,7 +106,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		rxString[rxindex] = rxBuffer;
 		rxindex++;
-		if (rxindex > 9)
+		if (rxindex > MAXCLISTRING)
 		{
 			rxindex = 0;
 			for (i = 0; i < MAXCLISTRING; i++) rxString[i] = 0; // Clear the string buffer

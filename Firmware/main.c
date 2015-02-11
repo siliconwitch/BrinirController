@@ -31,7 +31,6 @@
  * http://opensource.org/licenses/MIT
  */
 
-
 #include <stm32f4xx_hal.h>
 #include "prototypes.h"
 #include "config.h"
@@ -50,6 +49,7 @@ IWDG_HandleTypeDef hiwdg;
 /* Private function prototypes */
 void SystemClock_Config(void);
 
+/* Main function */
 int main(void)
 {
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -90,9 +90,9 @@ int main(void)
   fuzzyController_U.reverseSteering = INVERTSTEERING;
   fuzzyController_U.steeringTrim = STEERINGTRIM;
 
+  /* Main loop */
   while(1)
   {
-        
         IMUGetMotion();
 
         /* Send inputs into the controller */
@@ -129,7 +129,6 @@ int main(void)
 /* System Clock Configuration */
 void SystemClock_Config(void)
 {
-
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
@@ -157,7 +156,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
-
 }
 
 #ifdef USE_FULL_ASSERT
