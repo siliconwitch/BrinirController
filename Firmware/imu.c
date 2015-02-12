@@ -31,6 +31,7 @@ IMUMotion volatile Motion = {0,0,0,0,0,0,0,0};
 
 /* Private variables */
 I2C_HandleTypeDef hi2c1;
+GPIO_InitTypeDef GPIO_InitStruct;
 
 uint8_t rawIMU[14];
 int accelRegister = 0x00;
@@ -42,6 +43,8 @@ uint8_t temp = 0;
 /* Main init function for IMU, run this before using IMU*/
 void initIMU(void)
 {
+	
+	/* I2C init */
 	hi2c1.Instance = I2C1;
 	hi2c1.Init.ClockSpeed = 100000;
 	hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -52,7 +55,8 @@ void initIMU(void)
 	hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLED;
 	hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLED;
 	HAL_I2C_Init(&hi2c1);
-
+	
+	/* IMU device config */
 	IMUConfig(DEFAULTACCELRANGE, DEFAULTGYRORANGE);
 }
 

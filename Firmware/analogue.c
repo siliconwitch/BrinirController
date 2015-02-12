@@ -32,14 +32,7 @@ DMA_HandleTypeDef hdma_adc1;
 
 void initADC(void)
 {
-	/* Start DMA and attach interrupt */
-    __DMA2_CLK_ENABLE();
-    //HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 3, 5);
-    //HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn); /* Something goes wrong when turning this on */
-
-	/* Configure ADC1 */
-	ADC_ChannelConfTypeDef sConfig;
-	
+	/* Init ADC */
 	hadc1.Instance = ADC1;
 	hadc1.Init.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV2;
 	hadc1.Init.Resolution = ADC_RESOLUTION12b;
@@ -53,7 +46,12 @@ void initADC(void)
 	hadc1.Init.DMAContinuousRequests = ENABLE;
 	hadc1.Init.EOCSelection = EOC_SEQ_CONV;
 	HAL_ADC_Init(&hadc1);
+	
+	/* DMA settings in msp.c file */
 
+	/* Configure Channels */
+	ADC_ChannelConfTypeDef sConfig;
+	
 	/* Configure channel sample order*/
 	sConfig.Channel = ADC_CHANNEL_13;
 	sConfig.Rank = 4;

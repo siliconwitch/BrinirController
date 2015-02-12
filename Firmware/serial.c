@@ -1,12 +1,9 @@
  /*
- * Brief:    UART Serial to communicate with Xbee or btooth module
+ * Brief:    UART Serial to communicate with Xbee or bluetooth module
  *
  * Uses:     Uses the PB6 and PB7 pins
  *
  * Datasheet: 
- *
- * Copyright (C) 2014 Rajesh Nakarja. All rights reserved
- * http://www.naklojik.com
  *
  * Copyright (C) 2015 Rajesh Nakarja
  * http://www.naklojik.com
@@ -27,9 +24,6 @@
 uint8_t telemetryFlag = 0;
 
 /* Private variables */
-UART_HandleTypeDef huart1;
-DMA_HandleTypeDef hdma_usart1_rx;
-DMA_HandleTypeDef hdma_usart1_tx;
 uint8_t rxBuffer = '\000';
 uint8_t rxString[MAXCLISTRING];
 int rxindex = 0;
@@ -39,16 +33,15 @@ int TXBusy = 0;
 void executeSerialCommand(uint8_t string[]);
 uint8_t compareCommand(uint8_t inString[], uint8_t compString[], float *numArg);
 
+/* Handle structs */
+UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_tx;
+
 /* Main serial init function. Run this before sending any serial */
 void initSerial()
 {
-	__DMA2_CLK_ENABLE();
-	HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 5, 0);
-	HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
-	HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 5, 0);
-	HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
-
-	HAL_UART_MspInit(&huart1);
+	/* Init UART */
 	huart1.Instance = USART1;
 	huart1.Init.BaudRate = BAUDRATE;
 	huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -58,6 +51,8 @@ void initSerial()
 	huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
 	huart1.Init.OverSampling = UART_OVERSAMPLING_16;
 	HAL_UART_Init(&huart1);
+
+	/* Print OK */
 	print("\r\n[OK] Serial started");
 
 	/* Start the receiver */
@@ -68,8 +63,7 @@ void initSerial()
 /* Prints the supplied string to uart */
 void print(char string[])
 {
-	//HAL_UART_Transmit_DMA(&huart1, (uint8_t*)string, strlen(string));
-	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 100); // Working transmit function
+	HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 5);
 }
 
 /* UART TX complete callback */

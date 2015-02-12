@@ -100,6 +100,37 @@
 	#define ANAPORT		GPIOC
 
 /*------------------------*/
+/*  INTERRUPT PRIORITES   */
+/*------------------------*/
+
+	/* If using group 3 priorities, max can be 8 for main and 1 for sub*/
+	/* Low number means higher priority*/
+	#define PPM_INPUT_PRIORITY 1
+	#define PPM_INPUT_GPIO_SUBPRIORITY 0
+	#define PPM_INPUT_TIM_SUBPRIORITY 1
+
+	#define PPM_OUTPUT_PRIORITY 0
+	#define PPM_OUTPUT_GPIO_SUBPRIORITY 0
+	#define PPM_OUTPUT_TIM_SUBPRIORITY 1
+
+	#define RADIO_TIMEOUT_PRIORITY 2
+	#define RADIO_TIMEOUT_GPIO_SUBPRIORITY 0
+	#define RADIO_TIMEOUT_TIM_SUBPRIORITY 1
+
+	#define WHEELSPEED_PRIORITY 3
+	#define WHEELSPEED_GPIO_SUBPRIORITY 0
+	#define WHEELSPEED_TIM_SUBPRIORITY 1
+
+	#define ADC_PRIORITY 5
+
+	#define I2C_PRIORITY 4
+
+	#define UART_PRIORITY 6
+	#define UART_RX_SUBPRIORITY 0
+	#define UART_TX_SUBPRIORITY 1
+
+
+/*------------------------*/
 /*    GLOBAL VARIABLES    */
 /*------------------------*/
 

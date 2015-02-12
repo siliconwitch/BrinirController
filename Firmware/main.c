@@ -58,8 +58,10 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* Global priority group to use */
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_3); /* GRP 3 means max 8 possibilities for pre-empt and 2 for sub */
+
   /* System tick interrupt init*/
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
   /* Configure and start IWDG */
@@ -79,7 +81,7 @@ int main(void)
   fuzzyController_initialize();
 
   /* Intro message */
-  print("\r\nBrinir Controller Ready");
+  print("\r\n\nBrinir Controller Ready");
   print("\r\n(C) NakLojik 2015");
   print("\r\nFor help type 'help'");
   print("\r\nEnjoy your drive!");

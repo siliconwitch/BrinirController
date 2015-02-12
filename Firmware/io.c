@@ -10,9 +10,6 @@
  *
  * Datasheet: http://diodes.com/datasheets/AH3761.pdf
  *
- * Copyright (C) 2014 Rajesh Nakarja. All rights reserved
- * http://www.naklojik.com
- *
  * Copyright (C) 2015 Rajesh Nakarja
  * http://www.naklojik.com
  *
@@ -33,65 +30,28 @@ PPMOutputs volatile PPMOutputStructure = {0,0,0,0,0,0,0,0};
 int pulseIndex = 0;
 
 /* Private helper function declartions */
-double CalculateWheelRPM(uint32_t Count);
-double normaliseSignal(uint32_t input);  /* Turns the Timer count value of the input, into a -1 to 1 float */
-uint32_t denormaliseSignal(double input); /* Turns the float speed value back into a timer count value */
+double CalculateWheelRPM(uint32_t Count);	/* Calculates the RPM of the wheels from times between feedback pulses */
+double normaliseSignal(uint32_t input);		/* Turns the Timer count value of the input, into a -1 to 1 float */
+uint32_t denormaliseSignal(double input);	/* Turns the float speed value back into a timer count value */
 
 /* Private struct declarations */
-TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
-TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim6;	/* Free running timer for serial */
-TIM_HandleTypeDef htim10;
-TIM_HandleTypeDef htim11;
-TIM_HandleTypeDef htim13;
-TIM_HandleTypeDef htim14;
+TIM_HandleTypeDef htim2;					/* PPM length timer for radio input */
+TIM_HandleTypeDef htim3;					/* PPM length timer for motor outputs */
+TIM_HandleTypeDef htim4;					/* Radio input signal lost timeout timer */
+TIM_HandleTypeDef htim10;					/* wheel feedback count timer */
+TIM_HandleTypeDef htim11;					/* wheel feedback count timer */
+TIM_HandleTypeDef htim13;					/* wheel feedback count timer */
+TIM_HandleTypeDef htim14;					/* wheel feedback count timer */
 GPIO_InitTypeDef GPIO_InitStruct;
 TIM_ClockConfigTypeDef sClockSourceConfig;
 TIM_MasterConfigTypeDef sMasterConfig;
 
 void initIO()
 {
-
-	__GPIOA_CLK_ENABLE();
-  	__GPIOC_CLK_ENABLE();
-  	__GPIOB_CLK_ENABLE();
-
-	/*Configure GPIO input pins */
-	GPIO_InitStruct.Pin = REC1PIN | REC2PIN | REC3PIN | REC4PIN | FB1PIN | FB2PIN | FB3PIN | FB4PIN ;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	HAL_GPIO_Init(RECPORT/*same as FBPORT*/, &GPIO_InitStruct);
-
-	/*Configure GPIO output pins */
-	GPIO_InitStruct.Pin = AUX1PIN | AUX2PIN | AUX3PIN | AUX4PIN ;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(AUXPORT, &GPIO_InitStruct);
-
-	GPIO_InitStruct.Pin = MOTOR1PIN | MOTOR2PIN | MOTOR3PIN | MOTOR4PIN ;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(MOTORPORT, &GPIO_InitStruct);
-
-	/* Configure the pins for Serial and I2C comms */
-	GPIO_InitStruct.Pin = TXPIN | RXPIN ;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-	HAL_GPIO_Init(DATAPORT, &GPIO_InitStruct);
-
-	GPIO_InitStruct.Pin = SCLPIN | SDAPIN ;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
-	HAL_GPIO_Init(DATAPORT, &GPIO_InitStruct);
-
-	/* TIM2 Init */
+	/* Init GPIO and EXTI interrupts */
+	HAL_GPIO_MspInit();
+	
+	/* TIM2 Init - PPM Inputs */
 	htim2.Instance = TIM2;
 	htim2.Init.Prescaler = PPMMEASUREPRESCALER;
 	htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -108,7 +68,7 @@ void initIO()
 
 	HAL_TIM_Base_Start_IT(&htim2);
 	
-	/* TIM3 Init */
+	/* TIM3 Init - PPM Outputs */
 	htim3.Instance = TIM3;
 	htim3.Init.Prescaler = PPMMEASUREPRESCALER;
 	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -125,7 +85,7 @@ void initIO()
 
 	HAL_TIM_Base_Start_IT(&htim3);
 
-	/* TIM4 Init */
+	/* TIM4 Init - Lost signal timer */
 	htim4.Instance = TIM4;
 	htim4.Init.Prescaler = PPMTIMEOUTPRESCALER;
 	htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -141,21 +101,8 @@ void initIO()
 	HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig);
 
 	HAL_TIM_Base_Start_IT(&htim4);
-
-	
-	/* TIM6 Init */
-	htim6.Instance = TIM6;
-	htim6.Init.Prescaler = 42;
-	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim6.Init.Period = 50000;
-	HAL_TIM_Base_Init(&htim6);
-
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-	HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
-
-	HAL_TIM_Base_Start_IT(&htim6);
-	
+		
+	/* Wheel speed feedback timers */
 
 	/* TIM10 Init */
 	htim10.Instance = TIM10;
@@ -193,31 +140,7 @@ void initIO()
 	HAL_TIM_Base_Init(&htim14);
 	HAL_TIM_Base_Start_IT(&htim14);
 	
-	/* NVIC inits for the EXTI pins that get inputs*/
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-
-	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 3);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-
+	/* Print OK */
 	print("\r\n[OK] IO and timers ready");
 }
 

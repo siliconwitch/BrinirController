@@ -43,7 +43,6 @@ extern I2C_HandleTypeDef hi2c1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
-extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim10;
 extern TIM_HandleTypeDef htim11;
 extern TIM_HandleTypeDef htim13;
@@ -113,15 +112,6 @@ void EXTI0_IRQHandler(void)
   HAL_NVIC_ClearPendingIRQ(EXTI0_IRQn);
   
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-}
-
-/**
-* @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
-*/
-void TIM6_DAC_IRQHandler(void)
-{
-  HAL_NVIC_ClearPendingIRQ(TIM6_DAC_IRQn);
-  HAL_TIM_IRQHandler(&htim6);
 }
 
 /**
