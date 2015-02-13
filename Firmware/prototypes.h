@@ -31,4 +31,10 @@
 	void initSerial();
 	void print(char string[]);
 
+/* flash.c Function prototypes */
+	void initFlash(void);
+	void userConfigDefaults(void);
+	float getConfigFromFlash(int location);
+
+
 #endif

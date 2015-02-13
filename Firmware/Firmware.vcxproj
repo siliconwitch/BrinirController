@@ -123,6 +123,7 @@
     <ClCompile Include="..\Controller\fuzzyController_ert_rtw\fuzzyController.c" />
     <ClCompile Include="..\Controller\fuzzyController_ert_rtw\fuzzyController_data.c" />
     <ClCompile Include="analogue.c" />
+    <ClCompile Include="flash.c" />
     <ClCompile Include="imu.c" />
     <ClCompile Include="io.c" />
     <ClCompile Include="main.c" />
@@ -227,6 +228,7 @@
     <ClInclude Include="stm32f4xx_it.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="debug.mak" />
     <None Include="Makefile" />
     <None Include="release.mak" />

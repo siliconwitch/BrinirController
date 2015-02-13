@@ -244,6 +244,9 @@
     <ClCompile Include="syscalls.c">
       <Filter>Source files\Firmware</Filter>
     </ClCompile>
+    <ClCompile Include="flash.c">
+      <Filter>Source files\Firmware</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\AppData\Local\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h">
@@ -537,5 +540,6 @@
     <None Include="stm32.mak">
       <Filter>Source files\Device-specific files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

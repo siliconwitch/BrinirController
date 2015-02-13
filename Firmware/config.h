@@ -50,6 +50,23 @@
 	#define STEERINGTRIM 0.15
 	#define WHEELFEEDBACKENABLE 0
 
+	/* Misc */
+	#define MAGICNUMBER 66 /* If this isn't in the flash, it means the flash has been wiped and we need to restore defaults */
+
+/*------------------------*/
+/*  User flash locations  */
+/*------------------------*/
+
+	/* Control related */
+	#define MAGICNUMBER_LOC 0
+	#define POWERBIAS_LOC 1
+	#define FRONTSLIP_LOC 2
+	#define REARSLIP_LOC 3
+	#define GYROGAIN_LOC 4
+	#define INVERTSTEERING_LOC 5
+	#define STEERINGTRIM_LOC 6
+	#define WHEELFEEDBACKENABLE_LOC 7
+
 /*------------------------*/
 /* PIN MAPPINGS FOR BOARD */
 /*------------------------*/

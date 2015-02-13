@@ -69,13 +69,14 @@ int main(void)
   hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
   hiwdg.Init.Reload = 2047;
   HAL_IWDG_Init(&hiwdg);
-  HAL_IWDG_Start(&hiwdg);
+  //HAL_IWDG_Start(&hiwdg);
 
   /* Init vehicle functions */
   initSerial();
   initIO();
   initADC(); 
   initIMU();
+  initFlash();
   
   /* Start up the controller */
   fuzzyController_initialize();
