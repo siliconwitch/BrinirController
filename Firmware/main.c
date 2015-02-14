@@ -41,7 +41,13 @@
 extern PPMOutputs PPMOutputStructure;
 extern RCRadio RCRadioStructure;
 extern IMUMotion Motion;
+extern ControllerConfigStruct ControllerConfig;
+
+extern const int32_t userConfig[32];
+
 extern uint8_t telemetryFlag;
+extern uint8_t FlashWritePendingFlag = 0;
+
 
 /* Private variables */
 IWDG_HandleTypeDef hiwdg;
@@ -52,81 +58,197 @@ void SystemClock_Config(void);
 /* Main function */
 int main(void)
 {
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* Global priority group to use */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_3); /* GRP 3 means max 8 possibilities for pre-empt and 2 for sub */
+	/* Global priority group to use */
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_3); /* GRP 3 means max 8 possibilities for pre-empt and 2 for sub */
 
-  /* System tick interrupt init*/
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+	/* System tick interrupt init*/
+	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
-  /* Configure and start IWDG */
-  hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
-  hiwdg.Init.Reload = 2047;
-  HAL_IWDG_Init(&hiwdg);
-  //HAL_IWDG_Start(&hiwdg);
+	/* Init vehicle functions */
+	initSerial();
+	initIO();
+	initADC(); 
+	initIMU();
 
-  /* Init vehicle functions */
-  initSerial();
-  initIO();
-  initADC(); 
-  initIMU();
-  initFlash();
-  
-  /* Start up the controller */
-  fuzzyController_initialize();
+  	/* Configure and start IWDG */
+	hiwdg.Instance = IWDG;
+	hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
+	hiwdg.Init.Reload = 2047;
+	HAL_IWDG_Init(&hiwdg);
+	#ifdef WATCHDOG_EN
+		HAL_IWDG_Start(&hiwdg);
+		print("\r\n\[OK] Watchdog started");
+	#else
+		print("\r\n\[WARNING] Watchdog not enabled");
+	#endif
 
-  /* Intro message */
-  print("\r\n\nBrinir Controller Ready");
-  print("\r\n(C) NakLojik 2015");
-  print("\r\nFor help type 'help'");
-  print("\r\nEnjoy your drive!");
-  print("\r\n\nBrinir> ");
+	/* Start controller and set initial parameters */
+	fuzzyController_initialize();
 
-  /* Preset values */
-  //fuzzyController_U.wheelFeedbackEnable = WHEELFEEDBACKENABLE;
-  fuzzyController_U.reverseSteering = INVERTSTEERING;
-  fuzzyController_U.steeringTrim = STEERINGTRIM;
+	/* Loads the controller config registers into RAM */
+	loadControllerConfig();
 
-  /* Main loop */
-  while(1)
-  {
-        IMUGetMotion();
+	/* If magic number is invalid, reset to defaults*/
+	if (!validateFlash()) setControllerDefaults();
 
-        /* Send inputs into the controller */
-        fuzzyController_U.gyroGain = GYROGAIN;
-        fuzzyController_U.gyroYaw = Motion.yaw/DEFAULTGYRORANGE;          
-        fuzzyController_U.steeringSignal = RCRadioStructure.steering;   
-        fuzzyController_U.throttleSignal = RCRadioStructure.throttle;   
-        fuzzyController_U.frontDifferential = FRONTSLIP;
-        fuzzyController_U.rearDifferential = REARSLIP; 
-        fuzzyController_U.powerBias = POWERBIAS; 
+	/* Apply set parameters */
+	applyControllerConfig();
 
-        /* Run the controller */ 
-        fuzzyController_step();
+	/* Intro message */
+	print("\r\n\nBrinir Controller Ready");
+	print("\r\n(C) NakLojik 2015");
+	print("\r\nFor help type 'help'");
+	print("\r\nEnjoy your drive!");
+	print("\r\n\nBrinir> ");
+	
+	/* Main loop */
+	while(!FlashWritePendingFlag && !ResetPendingFlag)
+	{
+		IMUGetMotion();
 
-        /* Apply outputs from controller */
-        PPMOutputStructure.AUX4 = fuzzyController_Y.steeringOutput;
-        PPMOutputStructure.MOT1 = fuzzyController_Y.FLWheelOutput;
-        PPMOutputStructure.MOT2 = fuzzyController_Y.FRWheelOutput;
-        PPMOutputStructure.MOT3 = fuzzyController_Y.BLWheelOutput;
-        PPMOutputStructure.MOT4 = fuzzyController_Y.BRWheelOutput;      
+		/* Send inputs into the controller */
+		fuzzyController_U.gyroYaw = Motion.yaw/DEFAULTGYRORANGE;          
+		fuzzyController_U.steeringSignal = RCRadioStructure.steering;   
+		fuzzyController_U.throttleSignal = RCRadioStructure.throttle;   
+
+		/* Run the controller */ 
+		fuzzyController_step();
+
+		/* Apply outputs from controller */
+		PPMOutputStructure.AUX4 = fuzzyController_Y.steeringOutput;
+		PPMOutputStructure.MOT1 = fuzzyController_Y.FLWheelOutput;
+		PPMOutputStructure.MOT2 = fuzzyController_Y.FRWheelOutput;
+		PPMOutputStructure.MOT3 = fuzzyController_Y.BLWheelOutput;
+		PPMOutputStructure.MOT4 = fuzzyController_Y.BRWheelOutput;      
         
-        /* Send telemetery */
-        if (telemetryFlag == 1)
-        {
-          //print("idfs\n");
-        }
+		/* Send telemetery */
+		if (telemetryFlag)
+		{
+			//print("idfs\n");
+		}
 
-        /* Reset Watchdog */
-        HAL_IWDG_Refresh(&hiwdg);
-  }
-  return 0;
+		/* Reset Watchdog */
+		#ifdef WATCHDOG_EN
+			HAL_IWDG_Refresh(&hiwdg);
+		#endif
+	}
+
+	/* Left main loop so go into safe mode */
+	safeMode();
+
+	/* Extend the watchdog to allow for flash write */
+	#ifdef WATCHDOG_EN
+		hiwdg.Init.Prescaler = IWDG_PRESCALER_32;
+		hiwdg.Init.Reload = 2047;
+		HAL_IWDG_Init(&hiwdg);
+		HAL_IWDG_Refresh(&hiwdg);
+	#endif
+
+	if (FlashWritePendingFlag)
+	{
+		print("\r\n Writing data to flash, do not power off");
+		writeToFlash();
+	}
+
+	print("\r\n Restarting system\r\n");
+	NVIC_SystemReset();
+
+	return 0;
+}
+
+/* Sets controller parameters to defaults */
+void setControllerDefaults()
+{
+	print("\r\n Setting controller defaults");
+	ControllerConfig.powerBias = 0;
+	ControllerConfig.frontSlip = 950;
+	ControllerConfig.rearSlip = 100;
+	ControllerConfig.gyroGain = 1000;
+	ControllerConfig.steeringTrim = 150;
+	ControllerConfig.invertSteering = 0;
+	ControllerConfig.enableWheelSpeedFeedback = 0;
+	ControllerConfig.magicNumber = MAGICNUMBER;
+
+	FlashWritePendingFlag = 1;
+}
+
+/* Loads existing data from controller config memory */
+void loadControllerConfig()
+{
+	ControllerConfig.powerBias = userConfig[powerBias];
+	ControllerConfig.frontSlip = userConfig[frontSlip];
+	ControllerConfig.rearSlip = userConfig[rearSlip];
+	ControllerConfig.gyroGain = userConfig[gyroGain];
+	ControllerConfig.steeringTrim = userConfig[steeringTrim];
+	ControllerConfig.invertSteering = userConfig[invertSteering];
+	ControllerConfig.enableWheelSpeedFeedback = userConfig[enableWheelSpeedFeedback];
+	ControllerConfig.magicNumber = userConfig[magicNumber];
+}
+
+/* Sets parameter in the controller config */
+void setControllerConfig(ControllerConfigEnum param, int32_t value)
+{
+	switch (param)
+	{
+	case powerBias:
+		if(value < 5000 && value > -5000) ControllerConfig.powerBias = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case frontSlip:
+		if (value < 5000 && value > -5000) ControllerConfig.frontSlip = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case rearSlip:
+		if (value < 5000 && value > -5000) ControllerConfig.rearSlip = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case gyroGain:
+		if (value < 5000 && value > -5000) ControllerConfig.gyroGain = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case steeringTrim:
+		if (value < 5000 && value > -5000) ControllerConfig.steeringTrim = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case invertSteering:
+		if (value <= 1 && value >= 0) ControllerConfig.invertSteering = value;
+		else print("\r\n Input out of range");
+		break;
+
+	case enableWheelSpeedFeedback:
+		if (value <= 1 && value >= 0) ControllerConfig.enableWheelSpeedFeedback = value;
+		else print("\r\n Input out of range");
+		break;
+
+	default:
+		print("[ERROR] Incorrect parameter chosen");
+		break;
+	}
+
+	FlashWritePendingFlag = 1;
+}
+
+/* Applies constants to controller */
+void applyControllerConfig()
+{
+	//fuzzyController_U.wheelFeedbackEnable =			ControllerConfig.enableWheelSpeedFeedback;
+	fuzzyController_U.reverseSteering =				ControllerConfig.invertSteering;
+	fuzzyController_U.steeringTrim =		(float) ControllerConfig.steeringTrim	/ 1000;
+	fuzzyController_U.gyroGain =			(float) ControllerConfig.gyroGain		/ 1000;
+	fuzzyController_U.frontDifferential =	(float) ControllerConfig.frontSlip		/ 1000;
+	fuzzyController_U.rearDifferential =	(float) ControllerConfig.rearSlip		/ 1000;
+	fuzzyController_U.powerBias =			(float) ControllerConfig.powerBias		/ 1000;
 }
 
 /* System Clock Configuration */

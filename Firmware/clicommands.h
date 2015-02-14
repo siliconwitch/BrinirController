@@ -16,7 +16,17 @@
 
 	// Basic commands
 	#define CMD_HELP "help"
-	#define CMD_ABOUT "about"
+	#define CMD_PRINT_CONFIG "print config"
 	#define CMD_REBOOT "reboot"
+
+	// Controller related commands
+	#define CMD_DEFAULTS "defaults"
+	#define CMD_SET_POWERBIAS "power bias"
+	#define CMD_SET_FRONTSLIP "front slip"
+	#define CMD_SET_REARSLIP "rear slip"
+	#define CMD_SET_GYROGAIN "gyro gain"
+	#define CMD_SET_STEERINGTRIM "steering trim"
+	#define CMD_INVERT_STEERING "invert steering"
+	#define CMD_WHEELFEEDBACK "wheel feedback"
 
 #endif // !__CLICOMMANDS_H

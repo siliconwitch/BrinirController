@@ -15,6 +15,14 @@
 #ifndef __OUTPUTS_H
 #define __OUTPUTS_H
 
+	typedef enum { powerBias, frontSlip, rearSlip, gyroGain, steeringTrim, invertSteering, enableWheelSpeedFeedback, magicNumber } ControllerConfigEnum;
+
+/* main.c function prototypes */
+	void setControllerConfig(ControllerConfigEnum param, int32_t value);
+	void applyControllerConfig(void);
+	void loadControllerConfig(void);
+	void setControllerDefaults(void);
+
 /* analogue.c Function prototypes */ 
 	void initADC(void);
 
@@ -32,9 +40,7 @@
 	void print(char string[]);
 
 /* flash.c Function prototypes */
-	void initFlash(void);
-	void userConfigDefaults(void);
-	float getConfigFromFlash(int location);
-
+	uint8_t validateFlash(void);
+	void writeToFlash(void);
 
 #endif

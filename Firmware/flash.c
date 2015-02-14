@@ -16,65 +16,70 @@
 #include "prototypes.h"
 #include "config.h"
 
-/* Memory allocation for user data */
-__attribute__((__section__("user_data"))) const float userConfig[64];
-
 /* Watchdog handle struct */
 IWDG_HandleTypeDef hiwdg;
 
-/* Private function prototypes */
-void flashFault(void);
+/* Globals */
+ControllerConfigStruct ControllerConfig;
 
-/* Tests flash is set to defaults, if not, it will set them */
-void initFlash()
+/* Memory allocation for user data */
+__attribute__((__section__(".user_data"))) const int32_t userConfig[32];
+
+/* Private function prototypes */
+void hardFlashFault(void);
+
+/* Tests flash */
+uint8_t validateFlash(void)
 {
-	if (userConfig[MAGICNUMBER_LOC] != MAGICNUMBER)
+	if (userConfig[magicNumber] != MAGICNUMBER)
 	{
-		print("\r\n[ERROR] Flash data invalid, setting defaults");
-		userConfigDefaults();
+		print("\r\n[ERROR] Flash data is invalid");
+		return 0;
 	}
 	
 	print("\r\n[OK] Flash okay");
+	return 1;
 }
  
-/* Restores default settings for user config */
-void userConfigDefaults()
+/* Writes settings to flash for user config */
+void writeToFlash()
 {
 	HAL_FLASH_Unlock();
 
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[POWERBIAS_LOC], POWERBIAS);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[FRONTSLIP_LOC], FRONTSLIP);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[REARSLIP_LOC], REARSLIP);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[GYROGAIN_LOC], GYROGAIN);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[INVERTSTEERING_LOC], INVERTSTEERING);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[STEERINGTRIM_LOC], STEERINGTRIM);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[WHEELFEEDBACKENABLE_LOC], WHEELFEEDBACKENABLE);
-	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[MAGICNUMBER_LOC], MAGICNUMBER);
+	__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGSERR);
+	FLASH_Erase_Sector(FLASH_SECTOR_11, VOLTAGE_RANGE_3);
+	
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[powerBias], ControllerConfig.powerBias);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[frontSlip], ControllerConfig.frontSlip);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[rearSlip], ControllerConfig.rearSlip);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[gyroGain], ControllerConfig.gyroGain);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[steeringTrim], ControllerConfig.steeringTrim);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[invertSteering], ControllerConfig.invertSteering);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[enableWheelSpeedFeedback], ControllerConfig.enableWheelSpeedFeedback);
+	HAL_FLASH_Program(TYPEPROGRAM_WORD, &userConfig[magicNumber], ControllerConfig.magicNumber);
 	
 	HAL_FLASH_Lock();
 
-	if (userConfig[MAGICNUMBER_LOC] != MAGICNUMBER)
-	{
-		print("\r\n[CRITICAL] Defaults could not be restored. Cannot continue");
-		flashFault();
-	}
-
-	print("\r\n[OK] Defaults restored");
+	if (userConfig[magicNumber] != MAGICNUMBER) hardFlashFault();
 }
 
-float getConfigFromFlash(int location)
-{
-	return userConfig[location];
-}
-
-void flashFault()
+/* If the expected magic number wasn't read back 
+   correctly, that means theres a fault with the
+   flash operation. Don't start the controller
+   as a result and sit in this loop
+*/
+void hardFlashFault()
 {
 	/* We cannot let the platform start with invalid settings */
+	print("\r\n[CRITICAL] Defaults could not be restored. Cannot continue");
+
 	/* We must not let the platform fall into a reset loop else we'll kill the flash */
 	while (1)
 	{
 		/* Stay in safemode */
 		safeMode();
-		HAL_IWDG_Refresh(&hiwdg);
+		#ifdef WATCHDOG_EN
+			HAL_IWDG_Refresh(&hiwdg);
+		#endif
 	}
 }

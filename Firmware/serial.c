@@ -37,6 +37,7 @@ uint8_t compareCommand(uint8_t inString[], uint8_t compString[], float *numArg);
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
+IWDG_HandleTypeDef hiwdg;
 
 /* Main serial init function. Run this before sending any serial */
 void initSerial()
@@ -119,21 +120,101 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 void executeSerialCommand(uint8_t string[])
 {
 	float numArg = 0;
+	uint8_t tempBool = 0;
 
+	/* Big help screen */
 	if (compareCommand(string, CMD_HELP, &numArg))
 	{
-		print("\r\nHelp screen result:");
+		print("\r\n Format is:");
+		print("\r\n   command:number");
+		print("\r\n number must be between:");
+		print("\r\n   -1000 and 1000 for (permilli) commands");
+		print("\r\n   1 or 0 for (boolean) commands\n");
+		/* Because serial can be time consuming */
+		#ifdef WATCHDOG_EN
+				HAL_IWDG_Refresh(&hiwdg);
+		#endif
+		print("\r\n defaults - Sets defaults (no args)");
+		print("\r\n print config - Prints out the current config (no args)");
+		print("\r\n power bias - Sets front to rear power bias (permilli)");
+		print("\r\n front slip - Sets front diff slip (permilli)");
+		/* Because serial can be time consuming */
+		#ifdef WATCHDOG_EN
+				HAL_IWDG_Refresh(&hiwdg);
+		#endif
+		print("\r\n rear slip - Sets rear diff slip (permilli)");
+		print("\r\n gyro gain - Sets steering correction gain (permilli)");
+		print("\r\n steering trim - Trims the steering (permilli)");
+		/* Because serial can be time consuming */
+		#ifdef WATCHDOG_EN
+				HAL_IWDG_Refresh(&hiwdg);
+		#endif
+		print("\r\n invert steering - Inverts the steering (boolean)");
+		print("\r\n wheel feedback - Enables the wheel speed feedback (boolean)\n");
+
 	}
 
-	if (compareCommand(string, CMD_ABOUT, &numArg))
+	/* Prints current config */
+	if (compareCommand(string, CMD_PRINT_CONFIG, &numArg))
 	{
-		print("\r\nLol screen result:");
+		print("\r\n [TODO] config print still needs to be added\r\n");
 	}
 
+	/* Setting power bias etc */
+	if (compareCommand(string, CMD_SET_POWERBIAS, &numArg))
+	{
+		print("\r\n Power bias ");
+		setControllerConfig(powerBias, (int32_t)numArg);
+	}
+
+	if (compareCommand(string, CMD_SET_FRONTSLIP, &numArg))
+	{
+		print("\r\n Front slip ");
+		setControllerConfig(frontSlip, (int32_t)numArg);
+	}
+
+	if (compareCommand(string, CMD_SET_REARSLIP, &numArg))
+	{
+		setControllerConfig(rearSlip, (int32_t)numArg);
+		print("\r\n Rear slip ");
+	}
+
+	if (compareCommand(string, CMD_SET_GYROGAIN, &numArg))
+	{
+		setControllerConfig(gyroGain, (int32_t)numArg);
+		print("\r\n Gyro gain ");
+	}
+
+	if (compareCommand(string, CMD_SET_STEERINGTRIM, &numArg))
+	{
+		setControllerConfig(steeringTrim, (int32_t)numArg);
+		print("\r\n Steering trim ");
+	}
+
+	if (compareCommand(string, CMD_INVERT_STEERING, &numArg))
+	{
+		setControllerConfig(invertSteering, (int32_t)numArg);
+		print("\r\n Steering invert ");
+	}
+
+	if (compareCommand(string, CMD_WHEELFEEDBACK, &numArg))
+	{
+		setControllerConfig(enableWheelSpeedFeedback, (int32_t)numArg);
+		print("\r\n Wheel speed feedback ");
+	}
+
+	/* Restores default settings */
+	if (compareCommand(string, CMD_DEFAULTS, &numArg))
+	{
+		/* Set defaults */
+		setControllerDefaults();
+	}
+
+	/* Reboots CPU */
 	if (compareCommand(string, CMD_REBOOT, &numArg))
 	{
-		safeMode();
-		while (1){ } // Will timeout though watchdog
+		/* Flag for reset */
+		ResetPendingFlag = 1;
 	}
 
 	print("\r\nBrinir> ");

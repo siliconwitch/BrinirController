@@ -18,6 +18,7 @@
 /*------------------------*/
 /* INITIAL CONFIGURATION  */
 /*------------------------*/
+
 	/* Motor related */
 	#define MOTORPOLES	14
 
@@ -40,36 +41,15 @@
 	#define DEFAULTACCELRANGE	4
 	#define DEFAULTGYRORANGE	500
  	#define TIMEOUT 			1000
-
-	/* Control related */
-	#define POWERBIAS 0
-	#define FRONTSLIP 0.95
-	#define REARSLIP 0.1
- 	#define GYROGAIN 1.0
-	#define INVERTSTEERING 0
-	#define STEERINGTRIM 0.15
-	#define WHEELFEEDBACKENABLE 0
-
+	
 	/* Misc */
 	#define MAGICNUMBER 66 /* If this isn't in the flash, it means the flash has been wiped and we need to restore defaults */
-
-/*------------------------*/
-/*  User flash locations  */
-/*------------------------*/
-
-	/* Control related */
-	#define MAGICNUMBER_LOC 0
-	#define POWERBIAS_LOC 1
-	#define FRONTSLIP_LOC 2
-	#define REARSLIP_LOC 3
-	#define GYROGAIN_LOC 4
-	#define INVERTSTEERING_LOC 5
-	#define STEERINGTRIM_LOC 6
-	#define WHEELFEEDBACKENABLE_LOC 7
+	#define WATCHDOG_EN /* Comment out to disable watchdog, NOT RECOMENDED */
 
 /*------------------------*/
 /* PIN MAPPINGS FOR BOARD */
 /*------------------------*/
+
 	/* This is just a reference, don't change these pins without 
 	   checking where they are used. Each pin also have
 	   interrupts tied to them, so they'd also need changing */
@@ -150,6 +130,8 @@
 /*------------------------*/
 /*    GLOBAL VARIABLES    */
 /*------------------------*/
+	
+	typedef struct { int32_t powerBias, frontSlip, rearSlip, gyroGain, steeringTrim, invertSteering, enableWheelSpeedFeedback, magicNumber } ControllerConfigStruct;
 
 	typedef struct { double steering, throttle, aux1, aux2; } RCRadio;
 
@@ -162,5 +144,9 @@
 	typedef struct { float x, y, z, roll, pitch, yaw, temp, valid; } IMUMotion;
 
 	uint8_t telemetryFlag;
+
+	uint8_t FlashWritePendingFlag; /* Flag is 1 if flash write pending */
+
+	uint8_t ResetPendingFlag; /* Flag is 1 if reset pending */
 
 #endif
