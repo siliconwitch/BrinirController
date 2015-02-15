@@ -18,10 +18,10 @@
 #include "clicommands.h"
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
-/* Public variables */
+/* Globals */
 uint8_t telemetryFlag = 0;
+ControllerConfigStruct ControllerConfig;
 
 /* Private variables */
 uint8_t rxBuffer = '\000';
@@ -157,7 +157,36 @@ void executeSerialCommand(uint8_t string[])
 	/* Prints current config */
 	if (compareCommand(string, CMD_PRINT_CONFIG, &numArg))
 	{
-		print("\r\n [TODO] config print still needs to be added\r\n");
+		uint8_t intString[10];
+
+		print("\r\n Power bias: ");
+		itoa(ControllerConfig.powerBias, &intString, 10);
+		print(&intString);
+
+		print("\r\n Front slip: ");
+		itoa(ControllerConfig.frontSlip, &intString, 10);
+		print(&intString);
+
+		print("\r\n Rear slip: ");
+		itoa(ControllerConfig.rearSlip, &intString, 10);
+		print(&intString);
+
+		print("\r\n Gyro gain: ");
+		itoa(ControllerConfig.gyroGain, &intString, 10);
+		print(&intString);
+
+		print("\r\n Steering trim: ");
+		itoa(ControllerConfig.steeringTrim, &intString, 10);
+		print(&intString);
+
+		print("\r\n Invert steering: ");
+		itoa(ControllerConfig.invertSteering, &intString, 10);
+		print(&intString);
+
+		print("\r\n Wheel speed feedback: ");
+		itoa(ControllerConfig.enableWheelSpeedFeedback, &intString, 10);
+		print(&intString);
+		print("\r\n");
 	}
 
 	/* Setting power bias etc */
@@ -247,4 +276,30 @@ uint8_t compareCommand(uint8_t inString[], uint8_t compString[], float *numArg)
 			return 1; // command worked
 		}
 	}
+}
+
+/* Converts int to string */
+char* itoa(int value, char* result, int base)
+{
+	// check that the base if valid
+	if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+	char* ptr = result, *ptr1 = result, tmp_char;
+	int tmp_value;
+
+	do {
+		tmp_value = value;
+		value /= base;
+		*ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz"[35 + (tmp_value - value * base)];
+	} while (value);
+
+	// Apply negative sign
+	if (tmp_value < 0) *ptr++ = '-';
+	*ptr-- = '\0';
+	while (ptr1 < ptr) {
+		tmp_char = *ptr;
+		*ptr-- = *ptr1;
+		*ptr1++ = tmp_char;
+	}
+	return result;
 }

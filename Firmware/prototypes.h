@@ -38,6 +38,7 @@
 /* serial.c Function prototypes */
 	void initSerial();
 	void print(char string[]);
+	char* itoa(int value, char* result, int base);
 
 /* flash.c Function prototypes */
 	uint8_t validateFlash(void);
