@@ -159,12 +159,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
    			TIM2->CNT = 0;
 			break;
 
-		case REC3PIN: /* Aux1 pin */
-			break;
-
-		case REC4PIN: /* Aux2 pin */
-			break;
-
 		case FB1PIN: /* Feedback pin */
 			WheelRPMStructure.FL = CalculateWheelRPM(TIM10->CNT);
 			TIM10->CNT = 0;
@@ -214,38 +208,73 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		switch(pulseIndex){
 		    case 0:
 		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.MOT1);
-		        HAL_GPIO_WritePin(AUXPORT, AUX4PIN, GPIO_PIN_SET);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR1PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, AUX4PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR1PIN, GPIO_PIN_SET);
 		        pulseIndex++;
 		        break;
 
 		    case 1:
 		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.MOT2);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR1PIN, GPIO_PIN_SET);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR2PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR1PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR2PIN, GPIO_PIN_SET);
 		        pulseIndex++;
 		        break;
 
 		    case 2:
 		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.MOT3);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR2PIN, GPIO_PIN_SET);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR3PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR2PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR3PIN, GPIO_PIN_SET);
 		        pulseIndex++;
 		        break;
 
 		    case 3:
 		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.MOT4);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR3PIN, GPIO_PIN_SET);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR4PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR3PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR4PIN, GPIO_PIN_SET);
 		        pulseIndex++;
 		        break;
 
 		    case 4:
-		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.AUX4);
-		        HAL_GPIO_WritePin(MOTORPORT, MOTOR4PIN, GPIO_PIN_SET);
-		        HAL_GPIO_WritePin(AUXPORT, AUX4PIN, GPIO_PIN_RESET);
-		        pulseIndex = 0;
+		        TIM3->ARR = denormaliseSignal(PPMOutputStructure.SER1);
+		        HAL_GPIO_WritePin(MOTORPORT, MOTOR4PIN, GPIO_PIN_RESET);
+		        HAL_GPIO_WritePin(MOTORPORT, SERVO1PIN, GPIO_PIN_SET);
+		        pulseIndex++;
 		        break;
+
+			case 5:
+				TIM3->ARR = denormaliseSignal(PPMOutputStructure.SER2);
+				HAL_GPIO_WritePin(MOTORPORT, SERVO1PIN, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(MOTORPORT, SERVO2PIN, GPIO_PIN_SET);
+				pulseIndex++;
+				break;
+
+			case 6:
+				TIM3->ARR = denormaliseSignal(PPMOutputStructure.AUX1);
+				HAL_GPIO_WritePin(MOTORPORT, SERVO2PIN, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(MOTORPORT, AUX1PIN, GPIO_PIN_SET);
+				pulseIndex++;
+				break;
+
+			case 7:
+				TIM3->ARR = denormaliseSignal(PPMOutputStructure.AUX2);
+				HAL_GPIO_WritePin(MOTORPORT, AUX1PIN, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(MOTORPORT, AUX2PIN, GPIO_PIN_SET);
+				pulseIndex++;
+				break;
+
+			case 8:
+				TIM3->ARR = denormaliseSignal(PPMOutputStructure.AUX3);
+				HAL_GPIO_WritePin(MOTORPORT, AUX2PIN, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(MOTORPORT, AUX3PIN, GPIO_PIN_SET);
+				pulseIndex++;
+				break;
+
+			case 9:
+				TIM3->ARR = denormaliseSignal(PPMOutputStructure.AUX4);
+				HAL_GPIO_WritePin(MOTORPORT, AUX3PIN, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(MOTORPORT, AUX4PIN, GPIO_PIN_SET);
+				pulseIndex = 0;
+				break;
 		    }
 	}
 }
@@ -279,5 +308,10 @@ void safeMode(void)
     PPMOutputStructure.MOT2 = 0;
     PPMOutputStructure.MOT3 = 0;
     PPMOutputStructure.MOT4 = 0;
-    PPMOutputStructure.AUX4 = 0;
+	PPMOutputStructure.SER1 = 0;
+	PPMOutputStructure.SER2 = 0;
+	PPMOutputStructure.AUX1 = 0;
+	PPMOutputStructure.AUX2 = 0;
+	PPMOutputStructure.AUX3 = 0;
+	PPMOutputStructure.AUX4 = 0;
 }

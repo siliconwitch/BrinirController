@@ -121,11 +121,11 @@ int main(void)
 		fuzzyController_step();
 
 		/* Apply outputs from controller */
-		PPMOutputStructure.AUX4 = fuzzyController_Y.steeringOutput;
-		PPMOutputStructure.MOT1 = fuzzyController_Y.FLWheelOutput;
-		PPMOutputStructure.MOT2 = fuzzyController_Y.FRWheelOutput;
-		PPMOutputStructure.MOT3 = fuzzyController_Y.BLWheelOutput;
-		PPMOutputStructure.MOT4 = fuzzyController_Y.BRWheelOutput;      
+		PPMOutputStructure.SER1 = fuzzyController_Y.steeringOutput;
+		PPMOutputStructure.MOT4 = fuzzyController_Y.FLWheelOutput;
+		PPMOutputStructure.MOT3 = fuzzyController_Y.FRWheelOutput;
+		PPMOutputStructure.MOT2 = fuzzyController_Y.BLWheelOutput;
+		PPMOutputStructure.MOT1 = fuzzyController_Y.BRWheelOutput;      
         
 		/* Send telemetery */
 		if (telemetryFlag)

@@ -31,19 +31,19 @@ void HAL_GPIO_MspInit()
 	__GPIOB_CLK_ENABLE();
 
 	/*Configure GPIO input pins */
-	GPIO_InitStruct.Pin = REC1PIN | REC2PIN | REC3PIN | REC4PIN | FB1PIN | FB2PIN | FB3PIN | FB4PIN;
+	GPIO_InitStruct.Pin = REC1PIN | REC2PIN | FB1PIN | FB2PIN | FB3PIN | FB4PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(RECPORT/*same as FBPORT*/, &GPIO_InitStruct);
 
 	/*Configure GPIO output pins */
-	GPIO_InitStruct.Pin = AUX1PIN | AUX2PIN | AUX3PIN | AUX4PIN;
+	GPIO_InitStruct.Pin = AUX1PIN | AUX2PIN | AUX3PIN | AUX4PIN | LEDAPIN | LEDBPIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-	HAL_GPIO_Init(AUXPORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(AUXPORT/*same as LEDPORT*/, &GPIO_InitStruct);
 
-	GPIO_InitStruct.Pin = MOTOR1PIN | MOTOR2PIN | MOTOR3PIN | MOTOR4PIN;
+	GPIO_InitStruct.Pin = MOTOR1PIN | MOTOR2PIN | MOTOR3PIN | MOTOR4PIN | SERVO1PIN | SERVO2PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
@@ -137,7 +137,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
 	GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
-	HAL_GPIO_Init(DATAPORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(I2CPORT, &GPIO_InitStruct);
 
     /* Peripheral interrupt init*/
 	HAL_NVIC_SetPriority(I2C1_ER_IRQn, I2C_PRIORITY, 0);
@@ -153,7 +153,7 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
     __I2C1_CLK_DISABLE();
   
     /* I2C1 GPIO Configuration */
-	HAL_GPIO_DeInit(DATAPORT, SCLPIN | SDAPIN);
+	HAL_GPIO_DeInit(I2CPORT, SCLPIN | SDAPIN);
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(I2C1_ER_IRQn);
@@ -311,7 +311,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   if(huart->Instance==USART1)
   {
     /* Peripheral clock enable */
-	__GPIOB_CLK_ENABLE();
+	__GPIOA_CLK_ENABLE();
     __USART1_CLK_ENABLE();
 	__DMA2_CLK_ENABLE();
 
@@ -321,7 +321,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-	HAL_GPIO_Init(DATAPORT, &GPIO_InitStruct);
+	HAL_GPIO_Init(UARTPORT, &GPIO_InitStruct);
 
     /* Peripheral DMA init*/
     hdma_usart1_rx.Instance = DMA2_Stream2;
@@ -369,7 +369,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     __USART1_CLK_DISABLE();
   
     /* USART1 GPIO Configuration */
-	HAL_GPIO_DeInit(DATAPORT, TXPIN | RXPIN);
+	HAL_GPIO_DeInit(UARTPORT, TXPIN | RXPIN);
 
     /* Peripheral DMA DeInit */
     HAL_DMA_DeInit(huart->hdmarx);

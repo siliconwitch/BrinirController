@@ -54,11 +54,18 @@
 	   checking where they are used. Each pin also have
 	   interrupts tied to them, so they'd also need changing */
 
+	/* LED pins */
+	#define LEDAPIN		GPIO_PIN_0
+	#define LEDBPIN		GPIO_PIN_1
+	#define LEDPORT		GPIOB
+
 	/* Pins and port for motor outputs */
-	#define MOTOR1PIN	GPIO_PIN_6		/* FL Wheel */
-	#define MOTOR2PIN	GPIO_PIN_7		/* FR Wheel */
-	#define MOTOR3PIN	GPIO_PIN_8		/* BL Wheel */
-	#define MOTOR4PIN	GPIO_PIN_9		/* BR Wheel */
+	#define MOTOR1PIN	GPIO_PIN_9		/* Wheel BR*/
+	#define MOTOR2PIN	GPIO_PIN_8		/* Wheel BL*/
+	#define MOTOR3PIN	GPIO_PIN_7		/* Wheel FR*/
+	#define MOTOR4PIN	GPIO_PIN_6		/* Wheel FL*/
+	#define SERVO1PIN	GPIO_PIN_11
+	#define SERVO2PIN	GPIO_PIN_10
 	#define MOTORPORT	GPIOC
 
 	/* Pins and port for AUX outputs */
@@ -69,11 +76,15 @@
 	#define AUXPORT		GPIOB
 
 	/* Serial port pins */
-	#define TXPIN		GPIO_PIN_6
-	#define RXPIN		GPIO_PIN_7
+	#define TXPIN		GPIO_PIN_9
+	#define RXPIN		GPIO_PIN_10
+	#define BTSTATPIN	GPIO_PIN_8	// TODO implement this pin
+	#define UARTPORT	GPIOA
+
+	/* I2C port pins*/
 	#define SCLPIN		GPIO_PIN_8
 	#define SDAPIN		GPIO_PIN_9
-	#define DATAPORT	GPIOB
+	#define I2CPORT		GPIOB
 
 	/* Hallsensor feedback input pins */
 	#define FB1PIN		GPIO_PIN_4
@@ -85,8 +96,6 @@
 	/* Receiver input channel pins */
 	#define REC1PIN		GPIO_PIN_0
 	#define REC2PIN		GPIO_PIN_1
-	#define REC3PIN		GPIO_PIN_2
-	#define REC4PIN		GPIO_PIN_3
 	#define RECPORT		GPIOA
 
 	/* Analogue input pins */
@@ -135,7 +144,7 @@
 
 	typedef struct { double steering, throttle, aux1, aux2; } RCRadio;
 
-	typedef struct { double MOT1, MOT2, MOT3, MOT4, AUX1, AUX2, AUX3, AUX4; } PPMOutputs;
+	typedef struct { double MOT1, MOT2, MOT3, MOT4, SER1, SER2, AUX1, AUX2, AUX3, AUX4; } PPMOutputs;
 
 	typedef struct { double FL, FR, BL, BR; } WheelRPM;
 
