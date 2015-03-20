@@ -1,27 +1,55 @@
 # BrinirController
 =====================
 
-An embedded control system targeted to RC model cars which feature individual wheel drive. This controller allows for software differentials and power delivery with the aid of various sensors on the vehicle. Currently the system makes use of wheel speed sensors and a 6 axis IMU for real time processing.
+Brinir is an embedded control platform for RC scale model cars, trucks and buggys. It features:
 
-Overview Video: http://youtu.be/ET1HEyqEQJQ
+- Independent four wheel drive control (PPM)
+- Independent four way suspension control (PPM)
+- Two servo outputs (PPM)
+- Two radio inputs (PPM)
+- Four analogue inputs (Suspension throw)
+- Four digital inputs (Wheel tacho speed)
+- Command line configuration over any form of UART
+- Bootloading over UART
+- Model based control from Matlab/Simulink
 
-The controller communicates to a steering servo and four brushless DC motor controllers. It also listens to a standard RC radio receiver for user input, as well as a serial port for telemetry over wireless modules such as xbee or bluetooth.
+Overview Video: Coming soon...
 
-It's hoped that this project allows for advanced features such as traction control, under/over steer detection, adaptive power delivery and real-time telemetry.
+The firmware currently runs on an STM32F405RG device but can be scaled to run on any STM32 processor depending on processing power required.
 
-The system runs on Cortex M4 STM32F4 devices by ST microelectronics. To build this project, you will need the ARM-GCC compiler found here:
+The code is built using Visual Studio 2013 Community edition and VisualGDB
 
  Useful links
 --------------
-ARM GCC C Complier https://launchpad.net/gcc-arm-embedded
 
-As well as the STLink driver for uploading to a development board such as the STM32F4Discovery board:
+Visual Studio 2013 Community (Free): https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
+
+VisualGDB (Free trial) (~£70 1yr licence) (~£35 Students): http://visualgdb.com/
+
+
+Building
+--------------
+
+Once you have VS and VisualGDB installed. Create a new embedded project from the new project menu and follow the setup and install:
+
+GNU GCC Compiler for ARM
+STM32 support packages
+STLink v2 debugger drivers
+
+This can all be done from within the new project menus. There is also an option to test the settings. If you have trouble, use the tutorial on the VisualGDB website.
+
+Once the tools are setup. The Brinir project file, "BrinirController.sln" can be launched and built. It should build and load onto the STM32 without any changes.
+
+
+Handy tools if not using Visual GDB:
+--------------
+
+GNU GCC C Complier for ARM: https://launchpad.net/gcc-arm-embedded
 
 ST-Link v2 tool: http://www.st.com/web/en/catalog/tools/FM146/CL1984/SC724/SS1677/PF251168
 
-GDB debugging on stm32: http://www.emb4fun.de/archive/stlink/index.html
+GNU GDB debugging guide for stm32: http://www.emb4fun.de/archive/stlink/index.html
 
-The project is developed in Visual Studio 2014 Communitity with VisualGDB.
 
 Control System
 --------------
