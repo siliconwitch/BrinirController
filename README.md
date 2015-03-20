@@ -32,9 +32,9 @@ Building
 
 Once you have VS and VisualGDB installed. Create a new embedded project from the new project menu and follow the setup and install:
 
--GNU GCC Compiler for ARM
--STM32 support packages
--STLink v2 debugger drivers
+- GNU GCC Compiler for ARM
+- STM32 support packages
+- STLink v2 debugger drivers
 
 This can all be done from within the new project menus. There is also an option to test the settings. If you have trouble, use the tutorial on the VisualGDB website.
 
