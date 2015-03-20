@@ -19,7 +19,7 @@ The firmware currently runs on an STM32F405RG device but can be scaled to run on
 
 The code is built using Visual Studio 2013 Community edition and VisualGDB
 
- Useful links
+Useful links
 --------------
 
 Visual Studio 2013 Community (Free): https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
@@ -32,9 +32,9 @@ Building
 
 Once you have VS and VisualGDB installed. Create a new embedded project from the new project menu and follow the setup and install:
 
-GNU GCC Compiler for ARM
-STM32 support packages
-STLink v2 debugger drivers
+-GNU GCC Compiler for ARM
+-STM32 support packages
+-STLink v2 debugger drivers
 
 This can all be done from within the new project menus. There is also an option to test the settings. If you have trouble, use the tutorial on the VisualGDB website.
 
@@ -53,7 +53,12 @@ GNU GDB debugging guide for stm32: http://www.emb4fun.de/archive/stlink/index.ht
 
 Control System
 --------------
-The control system for the project is designed in Simulink and can be exported as C code using the embedded coder module. Granted this is the only part of the project that requires a non free software, the exported code however is still in readable C. Useful resource: http://www.mathworks.co.uk/hardware-support/arm-cortex-m-cmsis.html and http://www.mathworks.co.uk/hardware-support/st-discovery-board.html
+The control system for the project is designed in Simulink and can be exported as C code using the embedded coder module. Granted this is the only part of the project that requires a non free software, the exported code however is still in readable C.
+
+http://www.mathworks.co.uk/hardware-support/arm-cortex-m-cmsis.html
+
+http://www.mathworks.co.uk/hardware-support/st-discovery-board.html
+
 
 Copyright
 ---------
